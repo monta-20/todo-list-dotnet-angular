@@ -1,0 +1,33 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35828.75 d17.13
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TodoApi", "TodoApi\TodoApi.csproj", "{A3DFADDF-E19E-44B2-AFB6-1486562A45A6}"
+EndProject
+Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "todo-app", "..\todo-app\todo-app.esproj", "{D4D43858-6827-2729-C2B9-BBCE0B71AD93}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A3DFADDF-E19E-44B2-AFB6-1486562A45A6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A3DFADDF-E19E-44B2-AFB6-1486562A45A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A3DFADDF-E19E-44B2-AFB6-1486562A45A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A3DFADDF-E19E-44B2-AFB6-1486562A45A6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D4D43858-6827-2729-C2B9-BBCE0B71AD93}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D4D43858-6827-2729-C2B9-BBCE0B71AD93}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D4D43858-6827-2729-C2B9-BBCE0B71AD93}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{D4D43858-6827-2729-C2B9-BBCE0B71AD93}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D4D43858-6827-2729-C2B9-BBCE0B71AD93}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D4D43858-6827-2729-C2B9-BBCE0B71AD93}.Release|Any CPU.Deploy.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {CED82A5E-3B32-4E27-982E-C023B8F8815E}
+	EndGlobalSection
+EndGlobal
