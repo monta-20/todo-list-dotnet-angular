@@ -9,6 +9,6 @@ namespace TodoApi.Data
         Task<TodoItem> CreateAsync(TodoItem todo);
         Task<TodoItem?> UpdateAsync(long id, TodoUpdateDto dto);
         Task<bool> DeleteAsync(long id);
-        Task<List<TodoItem>> GetFilteredAsync(TodoQueryDto query); 
+        Task<PagedResult<TodoItem>> GetFilteredAsync(TodoQueryDto query);        
     }
 }

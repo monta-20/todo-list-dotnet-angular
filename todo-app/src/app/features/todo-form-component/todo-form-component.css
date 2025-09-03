@@ -1,0 +1,32 @@
+.todo-form {
+  max-width: 500px;
+  margin: auto;
+  background-color: #ffffff;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+  .todo-form h5 {
+    margin-bottom: 1rem;
+    color: #003D59;
+  }
+
+  .todo-form .btn-primary {
+    background-color: #BB132D;
+    border-color: #BB132D;
+  }
+
+    .todo-form .btn-primary:hover {
+      background-color: #a01227;
+      border-color: #a01227;
+    }
+
+  .todo-form .btn-secondary {
+    background-color: #f8f9fa;
+    color: #003D59;
+    border: 1px solid #003D59;
+  }
+
+    .todo-form .btn-secondary:hover {
+      background-color: #e2e6ea;
+    }

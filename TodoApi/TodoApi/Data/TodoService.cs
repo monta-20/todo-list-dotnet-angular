@@ -53,38 +53,49 @@ namespace TodoApi.Data
             await _context.SaveChangesAsync();
             return existingTodo;
         }
-        public async Task<List<TodoItem>> GetFilteredAsync(TodoQueryDto query)
+        public async Task<PagedResult<TodoItem>> GetFilteredAsync(TodoQueryDto query)
         {
-            var todos = _context.TodoItems.AsQueryable(); 
-            //Filtrage 
-            if(!string.IsNullOrEmpty(query.Priority))
-            {
+            var todos = _context.TodoItems.AsQueryable();
+
+            // Filtrage
+            if (!string.IsNullOrEmpty(query.Priority))
                 todos = todos.Where(t => t.Priority == query.Priority);
-            }
+
             if (!string.IsNullOrEmpty(query.Category))
-            {
                 todos = todos.Where(t => t.Category == query.Category);
-            }
+
             if (query.IsComplete.HasValue)
-            {
                 todos = todos.Where(t => t.IsComplete == query.IsComplete.Value);
-            }
+
             if (!string.IsNullOrEmpty(query.Search))
-            {
-                todos = todos.Where(t => t.Title.Contains(query.Search) || (t.Description != null && t.Description.Contains(query.Search)));
-            }
-            //Tri
+                todos = todos.Where(t => t.Title.Contains(query.Search) ||
+                                         (t.Description != null && t.Description.Contains(query.Search)));
+
+            // Total avant pagination
+            int total = await todos.CountAsync();
+
+            // Tri
             todos = query.SortBy?.ToLower() switch
             {
-                "title" => query.Descending ? todos.OrderByDescending(t => t.Title) : todos.OrderBy(t => t.Title),
-                "priority" => query.Descending ? todos.OrderByDescending(t => t.Priority) : todos.OrderBy(t => t.Priority),
-                "createdat" => query.Descending ? todos.OrderByDescending(t => t.CreatedAt) : todos.OrderBy(t => t.CreatedAt),
-                "duedate" => query.Descending ? todos.OrderByDescending(t => t.DueDate) : todos.OrderBy(t => t.DueDate),
-                _ => todos.OrderBy(t => t.Id), // Tri par défaut
+                "title" => query.Descending == true ? todos.OrderByDescending(t => t.Title) : todos.OrderBy(t => t.Title),
+                "priority" => query.Descending == true ? todos.OrderByDescending(t => t.Priority) : todos.OrderBy(t => t.Priority),
+                "createdat" => query.Descending == true ? todos.OrderByDescending(t => t.CreatedAt) : todos.OrderBy(t => t.CreatedAt),
+                "duedate" => query.Descending == true ? todos.OrderByDescending(t => t.DueDate) : todos.OrderBy(t => t.DueDate),
+                _ => todos.OrderBy(t => t.Id),
             };
-            //Pagination 
-            todos = todos.Skip((query.Page - 1) * query.PageSize).Take(query.PageSize);
-            return await todos.ToListAsync();
+
+            // Pagination
+            var items = await todos
+                .Skip((query.Page - 1) * query.PageSize)
+                .Take(query.PageSize)
+                .ToListAsync();
+
+            return new PagedResult<TodoItem>
+            {
+                Items = items,
+                Total = total
+            };
         }
+
     }
 }

@@ -1,0 +1,51 @@
+<div class="todo-form p-3 bg-white rounded shadow-sm">
+  <h5>{{ todo.id ? 'Modifier la tâche' : 'Nouvelle tâche' }}</h5>
+
+  <form (ngSubmit)="onSubmit()">
+    <!-- Titre -->
+    <div class="mb-3">
+      <label for="title" class="form-label">Titre</label>
+      <input id="title" type="text" class="form-control" [(ngModel)]="todo.title" name="title" required>
+    </div>
+
+    <!-- Description -->
+    <div class="mb-3">
+      <label for="description" class="form-label">Description</label>
+      <textarea id="description" class="form-control" [(ngModel)]="todo.description" name="description" rows="3"></textarea>
+    </div>
+
+    <!-- Priorité -->
+    <div class="mb-3">
+      <label for="priority" class="form-label">Priorité</label>
+      <select id="priority" class="form-select" [(ngModel)]="todo.priority" name="priority">
+        <option value="Haute">Haute</option>
+        <option value="Moyenne">Moyenne</option>
+        <option value="Basse">Basse</option>
+      </select>
+    </div>
+
+    <!-- Catégorie -->
+    <div class="mb-3">
+      <label for="category" class="form-label">Catégorie</label>
+      <input id="category" type="text" class="form-control" [(ngModel)]="todo.category" name="category">
+    </div>
+
+    <!-- Statut -->
+    <div class="mb-3 form-check">
+      <input id="isComplete" class="form-check-input" type="checkbox" [(ngModel)]="todo.isComplete" name="isComplete">
+      <label class="form-check-label" for="isComplete">Complété</label>
+    </div>
+
+    <!-- Date d'échéance -->
+    <!--<div class="mb-3">
+      <label for="dueDate" class="form-label">Date d'échéance</label>
+      <input id="dueDate" type="date" class="form-control" [(ngModel)]="todo.dueDate" name="dueDate">
+    </div>-->
+
+    <!-- Boutons -->
+    <div class="d-flex justify-content-end gap-2">
+      <button type="button" class="btn btn-secondary" (click)="onCancel()">Annuler</button>
+      <button type="submit" class="btn btn-primary">{{ todo.id ? 'Mettre à jour' : 'Ajouter' }}</button>
+    </div>
+  </form>
+</div>

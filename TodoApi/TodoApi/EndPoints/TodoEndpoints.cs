@@ -9,7 +9,7 @@ namespace TodoApi.EndPoints
         public static void MapTodoEndpoints(this WebApplication app)
         {
             var group = app.MapGroup("/api/v1/todos").WithTags("TodoItems");
-            group.MapGet("/", async ([FromServices] TodoService service) =>
+            group.MapGet("/", async (TodoService service) =>
             {
                 return Results.Ok(await service.GetAllAsync());
             });
@@ -38,11 +38,12 @@ namespace TodoApi.EndPoints
                 return deleted ? Results.NoContent() : Results.NotFound();
             });
 
-            group.MapGet("/filtered", async (TodoQueryDto query, [FromServices] TodoService service) =>
+            group.MapGet("/filtered", async ([AsParameters] TodoQueryDto query, [FromServices]  TodoService service) =>
             {
                 var filteredTodos = await service.GetFilteredAsync(query);
                 return Results.Ok(filteredTodos);
             });
+
 
         }
     }

@@ -1,0 +1,107 @@
+:root {
+  --primary: #003D59;
+  --accent: #BB132D;
+  --light-bg: #f8f9fa;
+}
+
+body {
+  background: linear-gradient(135deg, #f5f7f9 0%, #e8ecf1 100%);
+  min-height: 100vh;
+  padding: 20px 0;
+}
+
+.main-card {
+  border: none;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 61, 89, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+  .main-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0, 61, 89, 0.15);
+  }
+
+.card-header {
+  background: linear-gradient(135deg, var(--primary), #00283e);
+  color: white;
+  padding: 1.5rem;
+  border-bottom: none;
+}
+
+.card-body {
+  padding: 2rem;
+}
+
+/* Pagination modernisée */
+.pagination-modern {
+  margin-top: 2rem;
+}
+
+  .pagination-modern .page-item {
+    margin: 0 0.3rem;
+  }
+
+  .pagination-modern .page-link {
+    border: none;
+    border-radius: 10px;
+    padding: 0.6rem 1rem;
+    color: var(--primary);
+    font-weight: 500;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  }
+
+    .pagination-modern .page-link:hover {
+      background-color: var(--primary);
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 10px rgba(0, 61, 89, 0.2);
+    }
+
+  .pagination-modern .page-item.active .page-link {
+    background-color: var(--primary);
+    color: white;
+  }
+
+  .pagination-modern .page-item.disabled .page-link {
+    opacity: 0.5;
+    color: #6c757d;
+    transform: none;
+    box-shadow: none;
+  }
+
+  .pagination-modern .page-info {
+    background-color: rgba(0, 61, 89, 0.1);
+    color: var(--primary);
+    border-radius: 10px;
+  }
+
+/* Effet de séparation visuelle */
+.component-separator {
+  margin: 2rem 0;
+  position: relative;
+}
+
+  .component-separator::before {
+    content: "";
+    position: absolute;
+    top: -1rem;
+    left: 5%;
+    right: 5%;
+    height: 1px;
+    background: linear-gradient(to right, transparent, rgba(0, 61, 89, 0.2), transparent);
+  }
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .card-body {
+    padding: 1.5rem;
+  }
+
+  .pagination-modern .page-link {
+    padding: 0.5rem 0.8rem;
+    font-size: 0.9rem;
+  }
+}
