@@ -2,106 +2,281 @@
   --primary: #003D59;
   --accent: #BB132D;
   --light-bg: #f8f9fa;
+  --text-primary: #2d3748;
+  --text-secondary: #718096;
+  --border-color: #e2e8f0;
+  --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  --shadow-hover: 0 15px 40px rgba(0, 0, 0, 0.12);
 }
 
-body {
+.app-container {
+  padding: 2rem 1rem;
   background: linear-gradient(135deg, #f5f7f9 0%, #e8ecf1 100%);
   min-height: 100vh;
-  padding: 20px 0;
+}
+
+.app-content {
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .main-card {
-  border: none;
-  border-radius: 16px;
+  background: white;
+  border-radius: 20px;
+  box-shadow: var(--shadow);
   overflow: hidden;
-  box-shadow: 0 10px 30px rgba(0, 61, 89, 0.1);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
   .main-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 35px rgba(0, 61, 89, 0.15);
+    box-shadow: var(--shadow-hover);
   }
 
 .card-header {
   background: linear-gradient(135deg, var(--primary), #00283e);
   color: white;
-  padding: 1.5rem;
-  border-bottom: none;
-}
-
-.card-body {
   padding: 2rem;
-}
-
-/* Pagination modernisée */
-.pagination-modern {
-  margin-top: 2rem;
-}
-
-  .pagination-modern .page-item {
-    margin: 0 0.3rem;
-  }
-
-  .pagination-modern .page-link {
-    border: none;
-    border-radius: 10px;
-    padding: 0.6rem 1rem;
-    color: var(--primary);
-    font-weight: 500;
-    transition: all 0.2s ease;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-  }
-
-    .pagination-modern .page-link:hover {
-      background-color: var(--primary);
-      color: white;
-      transform: translateY(-2px);
-      box-shadow: 0 5px 10px rgba(0, 61, 89, 0.2);
-    }
-
-  .pagination-modern .page-item.active .page-link {
-    background-color: var(--primary);
-    color: white;
-  }
-
-  .pagination-modern .page-item.disabled .page-link {
-    opacity: 0.5;
-    color: #6c757d;
-    transform: none;
-    box-shadow: none;
-  }
-
-  .pagination-modern .page-info {
-    background-color: rgba(0, 61, 89, 0.1);
-    color: var(--primary);
-    border-radius: 10px;
-  }
-
-/* Effet de séparation visuelle */
-.component-separator {
-  margin: 2rem 0;
   position: relative;
 }
 
-  .component-separator::before {
-    content: "";
+  .card-header::after {
+    content: '';
     position: absolute;
-    top: -1rem;
-    left: 5%;
-    right: 5%;
-    height: 1px;
-    background: linear-gradient(to right, transparent, rgba(0, 61, 89, 0.2), transparent);
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent), #ff6b8a);
   }
 
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .card-body {
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+
+.header-text h1 {
+  margin: 0 0 0.5rem 0;
+  font-weight: 700;
+  font-size: 1.8rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+  .header-text h1 i {
+    font-size: 1.6rem;
+  }
+
+.header-text p {
+  margin: 0;
+  opacity: 0.85;
+  font-size: 1rem;
+}
+
+.btn-primary {
+  background: white;
+  color: var(--primary);
+  border: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: 12px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+  }
+
+  .btn-primary:active {
+    transform: translateY(0);
+  }
+
+.card-content {
+  padding: 2rem;
+}
+
+.form-container {
+  margin-bottom: 2rem;
+  animation: fadeIn 0.3s ease;
+}
+
+.filters-section {
+  margin-bottom: 1.5rem;
+}
+
+.section-divider {
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--border-color), transparent);
+  margin: 2rem 0;
+}
+
+.list-section {
+  margin-bottom: 2rem;
+}
+
+.pagination-section {
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.pagination-modern {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+}
+
+.pagination-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 2px solid var(--primary);
+  background: white;
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+  .pagination-btn:hover:not(.disabled) {
+    background: var(--primary);
+    color: white;
+    transform: translateY(-2px);
+  }
+
+  .pagination-btn.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+    .pagination-btn.disabled:hover {
+      background: white;
+      color: var(--primary);
+      transform: none;
+    }
+
+.pagination-info {
+  background: var(--light-bg);
+  padding: 0.6rem 1.2rem;
+  border-radius: 25px;
+  font-weight: 600;
+  color: var(--primary);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive design */
+@media (max-width: 968px) {
+  .app-container {
+    padding: 1rem;
+  }
+
+  .card-header {
     padding: 1.5rem;
   }
 
-  .pagination-modern .page-link {
-    padding: 0.5rem 0.8rem;
+  .header-content {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .header-text h1 {
+    font-size: 1.5rem;
+  }
+
+  .card-content {
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .header-text h1 {
+    font-size: 1.3rem;
+  }
+
+    .header-text h1 i {
+      font-size: 1.2rem;
+    }
+
+  .btn-primary {
+    padding: 0.7rem 1.2rem;
     font-size: 0.9rem;
   }
+
+  .card-content {
+    padding: 1rem;
+  }
+
+  .pagination-modern {
+    gap: 0.5rem;
+  }
+
+  .pagination-btn {
+    width: 40px;
+    height: 40px;
+  }
+
+  .pagination-info {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .header-text h1 {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .pagination-modern {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+}
+
+
+/* Formulaire overlay centré */
+.form-overlay {
+  position: absolute;
+  top: 42%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+/*  width: 90%;
+  max-width: 500px;*/
+}
+
+/* Dimmer la liste lorsqu'on affiche le formulaire */
+.dimmed {
+  opacity: 0.5;
+  pointer-events: none; /* pour éviter les clics */
+  transition: opacity 0.3s;
 }

@@ -11,14 +11,17 @@ namespace TodoApi.Models
         [Required]
         [MaxLength(200)]
         public string? Title { get; set; }
+        [Required]
         [MaxLength(1200)]
         public string? Description { get; set; } 
         public bool IsComplete { get; set; }
-        [MaxLength(20)]
+        [Required]
         public string? Priority { get; set; }
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-        public DateTime LastModifiedAt { get; set; } = DateTime.UtcNow;
-        public DateTime? DueDate { get; set; }
+        public DateTimeOffset CreatedAt { get; set; }
+        public DateTimeOffset LastModifiedAt { get; set; }
+        [Required]
+        public DateTimeOffset? DueDate { get; set; }
+        [Required]
         public string? Category { get; set; }
 
     }

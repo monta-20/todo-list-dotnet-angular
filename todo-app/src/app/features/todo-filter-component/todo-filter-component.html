@@ -1,69 +1,115 @@
-<div class="container-fluid p-3 bg-white rounded-3 shadow-sm border mb-4" style="max-width: 95%;">
-  <div class="row g-3 align-items-end">
+<div class="filter-container">
+  <div class="filter-header">
+    <i class="fas fa-filter"></i>
+    <h5>Filtres et Tri</h5>
+  </div>
 
-    <!-- Recherche -->
-    <div class="col-md-6 col-lg-2">
-      <label for="search" class="form-label small fw-semibold" style="color: #003D59;">Recherche</label>
-      <input id="search" type="text" class="form-control form-control-sm" [(ngModel)]="query.search" placeholder="Titre ou description">
-    </div>
+  <div class="filter-body">
+    <div class="row g-3">
+      <!-- Recherche -->
+      <div class="col-md-6 col-lg-3">
+        <div class="filter-group">
+          <label for="search" class="filter-label">
+            <i class="fas fa-search"></i> Recherche
+          </label>
+          <div class="input-wrapper">
+            <input id="search" type="text" class="filter-input"
+                   [(ngModel)]="query.search" placeholder="Titre ou description">
+          </div>
+        </div>
+      </div>
 
-    <!-- Priorité -->
-    <div class="col-md-6 col-lg-2">
-      <label for="priority" class="form-label small fw-semibold" style="color: #003D59;">Priorité</label>
-      <select id="priority" class="form-select form-select-sm" [(ngModel)]="query.priority">
-        <option value="">Toutes</option>
-        <option value="Haute">Haute</option>
-        <option value="Moyenne">Moyenne</option>
-        <option value="Basse">Basse</option>
-      </select>
-    </div>
+      <!-- Priorité -->
+      <div class="col-md-6 col-lg-2">
+        <div class="filter-group">
+          <label for="priority" class="filter-label">
+            <i class="fas fa-flag"></i> Priorité
+          </label>
+          <div class="select-wrapper">
+            <select id="priority" class="filter-select" [(ngModel)]="query.priority">
+              <option value="">Toutes</option>
+              <option value="Haute">Haute</option>
+              <option value="Moyenne">Moyenne</option>
+              <option value="Basse">Basse</option>
+            </select>
+            <i class="fas fa-chevron-down"></i>
+          </div>
+        </div>
+      </div>
 
-    <!-- Catégorie -->
-    <div class="col-md-6 col-lg-2">
-      <label for="category" class="form-label small fw-semibold" style="color: #003D59;">Catégorie</label>
-      <input id="category" type="text" class="form-control form-control-sm" [(ngModel)]="query.category" placeholder="Catégorie">
-    </div>
+      <!-- Catégorie -->
+      <div class="col-md-6 col-lg-2">
+        <div class="filter-group">
+          <label for="category" class="filter-label">
+            <i class="fas fa-tag"></i> Catégorie
+          </label>
+          <div class="input-wrapper">
+            <input id="category" type="text" class="filter-input"
+                   [(ngModel)]="query.category" placeholder="Catégorie">
+          </div>
+        </div>
+      </div>
 
-    <!-- Statut -->
-    <div class="col-md-6 col-lg-2">
-      <label for="isComplete" class="form-label small fw-semibold" style="color: #003D59;">Statut</label>
-      <select id="isComplete" class="form-select form-select-sm" [(ngModel)]="query.isComplete">
-        <option [ngValue]="undefined">Tous</option>
-        <option [ngValue]="true">Complet</option>
-        <option [ngValue]="false">Incomplet</option>
-      </select>
-    </div>
+      <!-- Statut -->
+      <div class="col-md-6 col-lg-2">
+        <div class="filter-group">
+          <label for="isComplete" class="filter-label">
+            <i class="fas fa-check-circle"></i> Statut
+          </label>
+          <div class="select-wrapper">
+            <select id="isComplete" class="filter-select" [(ngModel)]="query.isComplete">
+              <option [ngValue]="undefined">Tous</option>
+              <option [ngValue]="true">Complet</option>
+              <option [ngValue]="false">Incomplet</option>
+            </select>
+            <i class="fas fa-chevron-down"></i>
+          </div>
+        </div>
+      </div>
 
-    <!-- Trier par -->
-    <div class="col-md-6 col-lg-2">
-      <label for="sortBy" class="form-label small fw-semibold" style="color: #003D59;">Trier par</label>
-      <select id="sortBy" class="form-select form-select-sm" [(ngModel)]="query.sortBy">
-        <option value="CreatedAt">Date de création</option>
-        <option value="DueDate">Date d'échéance</option>
-        <option value="Priority">Priorité</option>
-        <option value="Title">Titre</option>
-      </select>
-    </div>
+      <!-- Trier par -->
+      <div class="col-md-6 col-lg-2">
+        <div class="filter-group">
+          <label for="sortBy" class="filter-label">
+            <i class="fas fa-sort"></i> Trier par
+          </label>
+          <div class="select-wrapper">
+            <select id="sortBy" class="filter-select" [(ngModel)]="query.sortBy">
+              <option value="CreatedAt">Date de création</option>
+              <option value="DueDate">Date d'échéance</option>
+              <option value="Priority">Priorité</option>
+              <option value="Title">Titre</option>
+            </select>
+            <i class="fas fa-chevron-down"></i>
+          </div>
+        </div>
+      </div>
 
-    <!-- Ordre -->
-    <div class="col-md-6 col-lg-2">
-      <div class="form-check mt-4">
-        <input class="form-check-input" type="checkbox" id="descending" [(ngModel)]="query.descending">
-        <label class="form-check-label small fw-semibold" style="color: #003D59;" for="descending">
-          Descendant
-        </label>
+      <!-- Ordre -->
+      <div class="col-md-6 col-lg-1">
+        <div class="filter-group">
+          <label class="filter-label">
+            <i class="fas fa-sort-amount-down"></i> Ordre
+          </label>
+          <div class="toggle-wrapper">
+            <label class="toggle-switch">
+              <input type="checkbox" [(ngModel)]="query.descending">
+              <span class="toggle-slider"></span>
+            </label>
+            <span class="toggle-label">{{ query.descending ? 'Desc' : 'Asc' }}</span>
+          </div>
+        </div>
       </div>
     </div>
 
     <!-- Boutons -->
-    <div class="col-12 d-flex justify-content-end gap-2 mt-3">
-      <button class="btn btn-sm" style="background-color: #BB132D; color: white;" (click)="resetFilter()">
-        Réinitialiser
+    <div class="filter-actions">
+      <button class="btn-filter btn-reset" (click)="resetFilter()">
+        <i class="fas fa-redo"></i> Réinitialiser
       </button>
-      <button class="btn btn-sm" (click)="applyFilter()" style="background-color: #003D59; color: white;">
-        Appliquer
+      <button class="btn-filter btn-apply" (click)="applyFilter()">
+        <i class="fas fa-check"></i> Appliquer
       </button>
     </div>
-
   </div>
 </div>

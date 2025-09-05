@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { ToDoList } from '../../core/services/to-do-list/to-do-list';
 import { TodoItem } from '../../models/TodoItem';
 import { TodoQuery } from '../../models/TodoQuery';
-import { PagedResult } from '../../models/PagedResult';
-
+import {  Router } from '@angular/router';
+import { Toast } from 'bootstrap';
 @Component({
   selector: 'app-todo-container-component',
   standalone: false,
@@ -25,16 +25,32 @@ export class TodoContainerComponent implements OnInit {
   totalPages: number = 0;
   loading: boolean = false;
   errorMessage: string = '';
-
+  toastMessage: string = '';
+  // Formulaire
   showForm: boolean = false;
-  currentTodo: TodoItem | null = null;
+  currentTodo: TodoItem = this.getEmptyTodo();
 
-  constructor(private todoService: ToDoList) { }
+  constructor(private todoService: ToDoList, private router: Router) { }
 
   ngOnInit(): void {
     this.loadTodos();
   }
 
+  private getEmptyTodo(): TodoItem {
+    return {
+      id: 0,
+      title: '',
+      description: '',
+      priority: '',
+      category: '',
+      isComplete: false,
+      createdAt: new Date().toISOString(),
+      lastModifiedAt: new Date().toISOString(),
+      dueDate: null
+    };
+  }
+
+  // Chargement des todos
   loadTodos() {
     this.loading = true;
     this.todoService.getFiltred(this.query).subscribe({
@@ -54,14 +70,15 @@ export class TodoContainerComponent implements OnInit {
     });
   }
 
+  // Filtrage
   onFilterChange(newQuery: TodoQuery) {
     this.query = { ...newQuery, page: 1 };
     this.loadTodos();
   }
 
+  // Pagination
   changePage(offset: number) {
     if (!this.query.page || !this.totalPages) return;
-
     const newPage = this.query.page + offset;
     if (newPage < 1 || newPage > this.totalPages) return;
 
@@ -69,50 +86,65 @@ export class TodoContainerComponent implements OnInit {
     this.loadTodos();
   }
 
+  // Formulaire ajout / édition
   openCreateForm() {
-    this.currentTodo = {
-      id: 0,
-      title: '',
-      description: '',
-      isComplete: false,
-      priority: 'Moyenne',
-      category: '',
-      createdAt: new Date().toISOString(),
-      lastModifiedAt: new Date().toISOString(),
-      dueDate: new Date().toISOString()
-    };
+    this.currentTodo = this.getEmptyTodo();
     this.showForm = true;
+    this.router.navigate(['/todo/add']);
   }
 
-  openEditForm(todo: TodoItem) {
-    this.currentTodo = { ...todo };
-    this.showForm = true;
+  openEditForm(id: number) {
+    const todo = this.todos.find(t => t.id === id);
+    if (todo) {
+      this.currentTodo = { ...todo };
+      if (this.currentTodo.dueDate) {
+        this.currentTodo.dueDate = this.currentTodo.dueDate.split('T')[0];
+      }
+      this.showForm = true;
+    }
+    this.router.navigate([`/todo/edit/${id}`]);
   }
+
 
   saveTodo(todo: TodoItem) {
     if (todo.id && todo.id > 0) {
-      this.todoService.update(todo.id, todo).subscribe({
-        next: () => {
-          this.loadTodos();
-          this.showForm = false;
-        },
-        error: (err) => console.error(err)
+      this.todoService.update(todo.id, todo).subscribe(() => {
+        this.showToast('mise à jour');
+        this.showForm = false;
+        this.loadTodos();
       });
     } else {
-      this.todoService.create(todo).subscribe({
-        next: () => {
-          this.loadTodos();
-          this.showForm = false;
-        },
-        error: (err) => console.error(err)
+      this.todoService.create(todo).subscribe(() => {
+        this.showToast('ajoutée');
+        this.showForm = false;
+        this.loadTodos();
       });
     }
+    this.router.navigate(["/todo"]);
   }
 
   cancelForm() {
     this.showForm = false;
-    this.currentTodo = null;
+    this.router.navigate(["/todo"]);
   }
 
+  // Suppression
+  deleteTodo(id: number) {
+    if (!confirm('Voulez-vous vraiment supprimer cette tâche ?')) return;
+    this.todoService.delete(id).subscribe({
+      next: () => this.loadTodos(),
+      error: (err) => console.error('Erreur delete:', err)
+    });
+  }
+
+  showToast(action: string) {
+    this.toastMessage = action;
+    const toastEl = document.getElementById('liveToast');
+    if (toastEl) {
+      const toast = new Toast(toastEl);
+      toast.show();
+    }
+  }
 }
+
 

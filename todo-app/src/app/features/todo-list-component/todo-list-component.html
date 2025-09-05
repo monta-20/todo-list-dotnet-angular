@@ -1,72 +1,80 @@
-<div class="container my-5">
-  <div class="row justify-content-center">
-    <div class="col-lg-10">
-      <div class="todo-container bg-white">
-        <!-- En-tête -->
-        <div class="todo-header">
-          <h4 class="mb-0">Liste des Tâches</h4>
-        </div>
-
-        <!-- Loading -->
-        <div *ngIf="loading" class="text-center my-5 py-4">
-          <div class="spinner-border spinner-custom" role="status"></div>
-          <p class="mt-3 loading-text">Chargement des tâches...</p>
-        </div>
-
-        <!-- Erreur -->
-        <div *ngIf="!loading && errorMessage" class="alert alert-danger alert-custom">
-          <i class="fas fa-exclamation-circle me-2"></i>
-          {{ errorMessage }}
-        </div>
-
-        <!-- Liste des todos -->
-        <div *ngIf="!loading && todos.length > 0" class="todo-list">
-          <div *ngFor="let todo of todos" class="todo-item">
-            <div class="d-flex justify-content-between align-items-start">
-              <div class="flex-grow-1">
-                <h5 class="todo-title">{{ todo.title }}</h5>
-                <p class="todo-description">{{ todo.description }}</p>
-
-                <div class="todo-meta">
-                  <span class="badge badge-custom">
-                    <i class="fas fa-tag"></i>{{ todo.category || 'Aucune catégorie' }}
-                  </span>
-
-                  <span class="badge badge-custom">
-                    <i class="fas fa-flag"></i>{{ todo.priority || 'Aucune' }}
-                  </span>
-
-                  <span [class]="todo.isComplete ? 'status-complete' : 'status-incomplete'">
-                    <i class="fas fa-circle-check"></i>
-                    {{ todo.isComplete ? 'Complété' : 'Incomplet' }}
-                  </span>
-
-                  <span class="due-date">
-                    <i class="fas fa-calendar-day"></i>
-                    {{ todo.dueDate | date:'shortDate' }}
-                  </span>
-                </div>
-              </div>
-
-              <div class="dropdown">
-                <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                  <i class="fas fa-ellipsis-v"></i>
-                </button>
-                <ul class="dropdown-menu dropdown-menu-end">
-                  <li><a class="dropdown-item" href="#"><i class="fas fa-edit"></i>Modifier</a></li>
-                  <li><a class="dropdown-item" href="#"><i class="fas fa-trash-alt"></i>Supprimer</a></li>
-                </ul>
-              </div>
-            </div>
+<!-- Liste des todos -->
+<div *ngIf="!loading && todos.length > 0" class="todo-list">
+  <div *ngFor="let todo of todos" class="todo-item"
+       [class.status-complete]="todo.isComplete"
+       [class.status-incomplete]="!todo.isComplete && !isOverdue(todo)"
+       [class.status-overdue]="isOverdue(todo)">
+    <div class="todo-content">
+      <!-- Header avec titre et actions -->
+      <div class="todo-header">
+        <h5 class="todo-title">{{ todo.title }}</h5>
+        <div class="todo-actions">
+          <button class="btn-action btn-edit" (click)="onEdit(todo)" title="Modifier">
+            <i class="fas fa-edit"></i>
+          </button>
+          <button class="btn-action btn-delete" (click)="onDelete(todo)" title="Supprimer">
+            <i class="fas fa-trash-alt"></i>
+          </button>
+          <div class="status-toggle"
+               [class.completed]="todo.isComplete"
+               [class.overdue]="!todo.isComplete && isOverdue(todo)">
+            <button class="status-btn" (click)="toggleComplete(todo)">
+              <span class="status-icon">
+                <i class="fas"
+                   [ngClass]="todo.isComplete ? 'fa-check' : (isOverdue(todo) ? 'fa-exclamation' : 'fa-circle')">
+                </i>
+              </span>
+              <span class="status-text">
+                {{ todo.isComplete ? 'Complété' : (isOverdue(todo) ? 'En retard' : 'En cours') }}
+              </span>
+            </button>
           </div>
         </div>
+      </div>
 
-        <!-- Pas de tâches -->
-        <div *ngIf="!loading && todos.length === 0 && !errorMessage" class="alert alert-info alert-custom mx-3 my-3">
-          <i class="fas fa-info-circle me-2"></i>
-          Aucune tâche trouvée.
-        </div>
+      <!-- Description -->
+      <p class="todo-description">{{ todo.description }}</p>
+
+      <!-- Meta informations -->
+      <div class="todo-meta">
+        <!-- Catégorie -->
+        <span class="todo-badge category">
+          <i class="fas fa-tag"></i> {{ todo.category || 'Sans catégorie' }}
+        </span>
+
+        <!-- Priorité -->
+        <span class="todo-badge priority"
+              [class.priority-high]="todo.priority === 'Haute'"
+              [class.priority-medium]="todo.priority === 'Moyenne'"
+              [class.priority-low]="todo.priority === 'Basse'">
+          <i class="fas fa-flag"></i> {{ todo.priority || 'Non définie' }}
+        </span>
+
+        <!-- Statut -->
+        <span class="todo-badge status"
+              [class.status-complete]="todo.isComplete"
+              [class.status-overdue]="isOverdue(todo)"
+              [class.status-incomplete]="!todo.isComplete && !isOverdue(todo)">
+          <i class="fas"
+             [ngClass]="todo.isComplete ? 'fa-check-circle' : (isOverdue(todo) ? 'fa-exclamation-circle' : 'fa-clock')">
+          </i>
+          {{ todo.isComplete ? 'Terminé' : (isOverdue(todo) ? 'Échue' : 'En cours') }}
+        </span>
+
+        <!-- Date d'échéance -->
+        <span class="todo-badge due-date">
+          <i class="fas fa-calendar-day"></i> {{ todo.dueDate | date:'dd/MM/yyyy' }}
+        </span>
       </div>
     </div>
   </div>
+</div>
+
+<!-- Message Pas de tâches -->
+<div *ngIf="!loading && todos.length === 0" class="empty-state">
+  <div class="empty-icon">
+    <i class="fas fa-clipboard-list"></i>
+  </div>
+  <h4>Aucune tâche pour le moment</h4>
+  <p>Commencez par ajouter une nouvelle tâche à votre liste</p>
 </div>

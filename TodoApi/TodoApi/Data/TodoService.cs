@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TodoApi.AppContext;
+using TodoApi.Helpers;
 using TodoApi.Models;
 
 namespace TodoApi.Data
@@ -13,6 +14,19 @@ namespace TodoApi.Data
         }
         public async Task<TodoItem> CreateAsync(TodoItem todo)
         {
+            // Forcer UTC
+            todo.CreatedAt = DateTimeOffset.UtcNow;
+            todo.LastModifiedAt = DateTimeOffset.UtcNow;
+
+            if (todo.DueDate.HasValue)
+                todo.DueDate = todo.DueDate.Value.ToUniversalTime();
+
+            if (!TodoHelpers.IsValidPriority(todo.Priority))
+                throw new ArgumentException($"Priorité invalide. Valeurs autorisées : {string.Join(", ", TodoHelpers.Priorities)}");
+
+            if (!TodoHelpers.IsValidCategory(todo.Category))
+                throw new ArgumentException($"Catégorie invalide. Valeurs autorisées : {string.Join(", ", TodoHelpers.Categories)}");
+
             await _context.TodoItems.AddAsync(todo);
             await _context.SaveChangesAsync();
             return todo;
@@ -36,20 +50,30 @@ namespace TodoApi.Data
         {
             return await _context.TodoItems.FindAsync(id);
         }
-        public async Task<TodoItem?> UpdateAsync(long id, TodoUpdateDto dto )
+        public async Task<TodoItem?> UpdateAsync(long id, TodoUpdateDto dto)
         {
             var existingTodo = await _context.TodoItems.FindAsync(id);
             if (existingTodo == null)
             {
-                return null; 
+                return null;
             }
+            if (!TodoHelpers.IsValidPriority(dto.Priority))
+                throw new ArgumentException($"Priorité invalide. Valeurs autorisées : {string.Join(", ", TodoHelpers.Priorities)}");
+
+            if (!TodoHelpers.IsValidCategory(dto.Category))
+                throw new ArgumentException($"Catégorie invalide. Valeurs autorisées : {string.Join(", ", TodoHelpers.Categories)}");
+
             existingTodo.Title = dto.Title;
             existingTodo.Description = dto.Description;
             existingTodo.IsComplete = dto.IsComplete;
             existingTodo.Priority = dto.Priority;
-            existingTodo.DueDate = dto.DueDate;
             existingTodo.Category = dto.Category;
-            existingTodo.LastModifiedAt = DateTime.UtcNow;
+
+            if (dto.DueDate.HasValue)
+                existingTodo.DueDate = dto.DueDate.Value.ToUniversalTime();
+
+            existingTodo.LastModifiedAt = DateTimeOffset.UtcNow;
+
             await _context.SaveChangesAsync();
             return existingTodo;
         }
@@ -68,8 +92,12 @@ namespace TodoApi.Data
                 todos = todos.Where(t => t.IsComplete == query.IsComplete.Value);
 
             if (!string.IsNullOrEmpty(query.Search))
-                todos = todos.Where(t => t.Title.Contains(query.Search) ||
-                                         (t.Description != null && t.Description.Contains(query.Search)));
+            {
+                todos = todos.Where(t =>
+                    EF.Functions.ILike(t.Title, $"%{query.Search}%") ||
+                    (t.Description != null && EF.Functions.ILike(t.Description, $"%{query.Search}%"))
+                );
+            }
 
             // Total avant pagination
             int total = await todos.CountAsync();
@@ -94,6 +122,28 @@ namespace TodoApi.Data
             {
                 Items = items,
                 Total = total
+            };
+        }
+        public async Task<TodoUpdateDto?> ToggleCompleteAsync(long id)
+        {
+            var todo = await _context.TodoItems.FindAsync(id);
+            if (todo == null) return null;
+
+            todo.IsComplete = !todo.IsComplete;
+            todo.LastModifiedAt = DateTime.UtcNow;
+
+            bool isOverdue = todo.DueDate.HasValue && todo.DueDate.Value.UtcDateTime < DateTime.UtcNow;
+
+            await _context.SaveChangesAsync();
+
+            return new TodoUpdateDto
+            {
+                Id = todo.Id,
+                Title = todo.Title,
+                IsComplete = todo.IsComplete,
+                IsOverdue = isOverdue,
+                DueDate = todo.DueDate,
+                LastModifiedAt = todo.LastModifiedAt
             };
         }
 

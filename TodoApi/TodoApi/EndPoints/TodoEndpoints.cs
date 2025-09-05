@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TodoApi.Data;
+using TodoApi.Helpers;
 using TodoApi.Models;
 
 namespace TodoApi.EndPoints
@@ -44,6 +45,21 @@ namespace TodoApi.EndPoints
                 return Results.Ok(filteredTodos);
             });
 
+            group.MapGet("/metadata", () =>
+            {
+                return Results.Ok(new
+                {
+                    Priorities = TodoHelpers.Priorities,
+                    Categories = TodoHelpers.Categories
+                });
+            });
+            group.MapPatch("/{id}/toggle-complete", async (long id, [FromServices] TodoService service) =>
+            {
+                var updatedTodo = await service.ToggleCompleteAsync(id);
+                return updatedTodo is not null
+                    ? Results.Ok(updatedTodo)
+                    : Results.NotFound();
+            });
 
         }
     }

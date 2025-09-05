@@ -6,6 +6,7 @@ namespace TodoApi.Models
     {
         [Required]
         [MaxLength(200)]
+        public long? Id; 
         public string? Title { get; set; }
 
         [MaxLength(1200)]
@@ -16,8 +17,10 @@ namespace TodoApi.Models
         [MaxLength(20)]
         public string? Priority { get; set; }
 
-        public DateTime? DueDate { get; set; }
+        public DateTimeOffset? DueDate { get; set; }
 
         public string? Category { get; set; }
+        public bool IsOverdue { get; set; }
+        public DateTimeOffset LastModifiedAt { get; set; }
     }
 }

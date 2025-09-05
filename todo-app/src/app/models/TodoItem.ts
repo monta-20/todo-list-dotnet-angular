@@ -6,6 +6,6 @@ export interface TodoItem {
   priority?: string;         
   createdAt: string;         
   lastModifiedAt: string;    
-  dueDate?: string;          
-  category?: string;        
+  dueDate?: string | null ;          
+  category?: string;
 }
