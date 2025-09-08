@@ -60,7 +60,6 @@ namespace TodoApi.EndPoints
                     ? Results.Ok(updatedTodo)
                     : Results.NotFound();
             });
-
         }
     }
 }

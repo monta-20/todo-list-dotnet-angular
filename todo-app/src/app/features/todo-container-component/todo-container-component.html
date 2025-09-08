@@ -79,3 +79,34 @@
     </div>
   </div>
 </div>
+
+
+<!-- Modal de confirmation moderne -->
+<div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content shadow-lg rounded-4 border-0">
+
+      <div class="modal-header border-0">
+        <h5 class="modal-title w-100 text-center fw-bold" id="confirmDeleteLabel">
+          Supprimer la tâche ?
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+      </div>
+
+      <div class="modal-body text-center">
+        <p class="mb-0">Êtes-vous sûr de vouloir continuer ?</p>
+      </div>
+
+      <div class="modal-footer justify-content-center border-0">
+        <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">
+          Annuler
+        </button>
+        <button type="button" class="btn btn-danger rounded-pill px-4" (click)="confirmDelete()">
+          Supprimer
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
+

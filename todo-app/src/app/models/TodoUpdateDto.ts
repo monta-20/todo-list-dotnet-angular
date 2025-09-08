@@ -1,11 +1,9 @@
 export interface TodoUpdateDto {
-  id?: number;             
-  title?: string;          
-  description?: string;    
-  isComplete: boolean;     
-  priority?: string;       
-  dueDate?: string;        
-  category?: string;       
-  isOverdue: boolean;      
+  id: number;
+  title: string;
+  isComplete: boolean;
+  isOverdue: boolean;
+  canToggle: boolean;
+  dueDate: string;
   lastModifiedAt: string;
 }

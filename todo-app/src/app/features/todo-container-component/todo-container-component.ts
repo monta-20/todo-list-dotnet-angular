@@ -3,7 +3,7 @@ import { ToDoList } from '../../core/services/to-do-list/to-do-list';
 import { TodoItem } from '../../models/TodoItem';
 import { TodoQuery } from '../../models/TodoQuery';
 import {  Router } from '@angular/router';
-import { Toast } from 'bootstrap';
+declare var bootstrap: any;
 @Component({
   selector: 'app-todo-container-component',
   standalone: false,
@@ -12,6 +12,8 @@ import { Toast } from 'bootstrap';
 })
 export class TodoContainerComponent implements OnInit {
   todos: TodoItem[] = [];
+  todoIdToDelete: number | null = null;
+
   query: TodoQuery = {
     priority: '',
     category: '',
@@ -128,23 +130,51 @@ export class TodoContainerComponent implements OnInit {
     this.router.navigate(["/todo"]);
   }
 
-  // Suppression
+  // Ouvre le modal et stocke l'id à supprimer
   deleteTodo(id: number) {
-    if (!confirm('Voulez-vous vraiment supprimer cette tâche ?')) return;
-    this.todoService.delete(id).subscribe({
-      next: () => this.loadTodos(),
-      error: (err) => console.error('Erreur delete:', err)
-    });
+    this.todoIdToDelete = id;
+    const modalEl = document.getElementById('confirmDeleteModal');
+    if (modalEl) {
+      const modal = new bootstrap.Modal(modalEl);
+      modal.show();
+    }
   }
 
+  // Confirme la suppression lorsque l'utilisateur clique sur le bouton du modal
+  confirmDelete() {
+    if (this.todoIdToDelete === null) return;
+
+    this.todoService.delete(this.todoIdToDelete).subscribe({
+      next: () => {
+        this.loadTodos();
+        this.showToast('supprimée');
+      },
+      error: err => {
+        console.error('Erreur delete:', err);
+        this.showToast('Erreur lors de la suppression');
+      }
+    });
+
+    // Fermer le modal
+    const modalEl = document.getElementById('confirmDeleteModal');
+    if (modalEl) {
+      const modal = bootstrap.Modal.getInstance(modalEl);
+      modal?.hide();
+    }
+
+    this.todoIdToDelete = null;
+  }
+
+  // Méthode toast
   showToast(action: string) {
     this.toastMessage = action;
     const toastEl = document.getElementById('liveToast');
     if (toastEl) {
-      const toast = new Toast(toastEl);
+      const toast = new bootstrap.Toast(toastEl);
       toast.show();
     }
   }
+
 }
 
 

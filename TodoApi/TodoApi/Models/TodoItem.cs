@@ -23,6 +23,9 @@ namespace TodoApi.Models
         public DateTimeOffset? DueDate { get; set; }
         [Required]
         public string? Category { get; set; }
-
+        [NotMapped]
+        public bool IsOverdue => DueDate.HasValue && DueDate.Value.LocalDateTime.Date < DateTime.Now.Date;
+        [NotMapped]
+        public bool CanToggle => DueDate.HasValue && DueDate.Value.LocalDateTime.Date >= DateTime.Now.Date;
     }
 }

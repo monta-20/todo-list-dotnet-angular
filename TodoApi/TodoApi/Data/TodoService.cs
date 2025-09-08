@@ -129,19 +129,19 @@ namespace TodoApi.Data
             var todo = await _context.TodoItems.FindAsync(id);
             if (todo == null) return null;
 
-            todo.IsComplete = !todo.IsComplete;
-            todo.LastModifiedAt = DateTime.UtcNow;
-
-            bool isOverdue = todo.DueDate.HasValue && todo.DueDate.Value.UtcDateTime < DateTime.UtcNow;
-
-            await _context.SaveChangesAsync();
-
+            if (todo.CanToggle)
+            {
+                todo.IsComplete = !todo.IsComplete;
+                todo.LastModifiedAt = DateTime.UtcNow;
+                await _context.SaveChangesAsync();
+            }
             return new TodoUpdateDto
             {
                 Id = todo.Id,
                 Title = todo.Title,
                 IsComplete = todo.IsComplete,
-                IsOverdue = isOverdue,
+                IsOverdue = todo.IsOverdue,
+                CanToggle = todo.CanToggle,
                 DueDate = todo.DueDate,
                 LastModifiedAt = todo.LastModifiedAt
             };

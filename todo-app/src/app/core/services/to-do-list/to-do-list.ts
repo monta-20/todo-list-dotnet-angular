@@ -39,7 +39,7 @@ export class ToDoList {
   getMetadata(): Observable<any> {
     return this._http.get(`${this.apiUrl}/metadata`);
   }
-  toggleComplete(id: number): Observable<TodoUpdateDto> {
-    return this._http.patch<TodoUpdateDto>(`${this.apiUrl}/${id}/toggle-complete`, {});
+  toggleComplete(id: number): Observable<TodoItem> {
+    return this._http.patch<TodoItem>(`${this.apiUrl}/${id}/toggle-complete`, {});
   }
 }
