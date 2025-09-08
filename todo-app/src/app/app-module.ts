@@ -9,6 +9,7 @@ import { TodoFormComponent } from './features/todo-form-component/todo-form-comp
 import { TodoFilterComponent } from './features/todo-filter-component/todo-filter-component';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
+import { TodoLogin } from './features/todo-login/todo-login';
 
 @NgModule({
   declarations: [
@@ -16,7 +17,8 @@ import { HttpClientModule } from '@angular/common/http';
     TodoContainerComponent,
     TodoListComponent,
     TodoFormComponent,
-    TodoFilterComponent
+    TodoFilterComponent,
+    TodoLogin
   ],
   imports: [
     BrowserModule,

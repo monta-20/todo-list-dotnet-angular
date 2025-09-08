@@ -9,6 +9,6 @@ namespace TodoApi.AppContext
         public TodoDbContext(DbContextOptions<TodoDbContext> options) : base(options) { }
        
         public DbSet<TodoItem> TodoItems { get; set; }
-       
+        public DbSet<User> Users { get; set; }
     }
 }
