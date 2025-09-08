@@ -69,14 +69,12 @@ builder.Services.AddAuthorization();
 // -------------------------
 // Polices
 // -------------------------
-
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("UserPolicy", policy => policy.RequireRole("User"));
     options.AddPolicy("AdminPolicy", policy => policy.RequireRole("Admin"));
     options.AddPolicy("UserOrAdminPolicy", policy => policy.RequireRole("User", "Admin"));
 });
-
 
 // -------------------------
 // CORS
