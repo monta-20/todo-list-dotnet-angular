@@ -1,0 +1,16 @@
+<div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1200">
+  <div *ngFor="let toast of toastService.toasts"
+       class="toast show mb-2 align-items-center text-white"
+       [ngClass]="{
+         'bg-success': toast.type === 'success',
+         'bg-danger': toast.type === 'error',
+         'bg-info': toast.type === 'info',
+         'bg-warning text-dark': toast.type === 'warning'
+       }"
+       role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="d-flex">
+      <div class="toast-body">{{ toast.message }}</div>
+    </div>
+  </div>
+</div>
+

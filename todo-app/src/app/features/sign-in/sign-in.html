@@ -1,0 +1,69 @@
+<section class="bg-primary min-vh-100 d-flex align-items-center">
+  <div class="container">
+    <div class="row justify-content-center gy-4 align-items-center">
+      <!-- Partie illustration -->
+      <div class="col-12 col-md-6 text-center text-white">
+        <div class="p-4 rounded-4 bg-white bg-opacity-25 mb-4">
+          <h1 class="mb-3 fw-bold">Boostez votre productivité avec To-Do List Pro</h1>
+          <p class="lead mb-0">
+            Organisez vos tâches, suivez vos projets et restez concentré sur l'essentiel.
+            Transformez chaque journée en succès !
+          </p>
+        </div>
+      </div>
+
+
+      <!-- Partie login -->
+      <div class="col-12 col-md-6 col-lg-5">
+        <div class="card shadow rounded-4 border-0 mx-auto">
+          <div class="card-body p-4">
+            <h3 class="mb-3 text-center">Connexion</h3>
+            <p class="mb-4 text-center">
+              Pas encore de compte ?
+              <button class="btn btn-outline-secondary btn-sm ms-2" (click)="goToSignUp()">
+                Créer un compte
+              </button>
+            </p>
+
+            <form (ngSubmit)="onSignIn()">
+              <div class="form-floating mb-3">
+                <input type="email" id="email" name="email" [(ngModel)]="email" class="form-control" placeholder="name@example.com" required>
+                <label for="email">Email</label>
+              </div>
+
+              <div class="form-floating mb-3">
+                <input type="password" id="password" name="password" [(ngModel)]="password" class="form-control" placeholder="Password" required>
+                <label for="password">Mot de passe</label>
+              </div>
+
+              <div class="form-check mb-3">
+                <input type="checkbox" class="form-check-input" id="remember_me">
+                <label for="remember_me" class="form-check-label text-secondary">Se souvenir de moi</label>
+              </div>
+
+              <button type="submit"
+                      class="btn btn-custom btn-lg w-auto mb-3 px-4 d-block mx-auto"
+                      [disabled]="!email || !password">
+                Se connecter
+              </button>
+            </form>
+
+            <p class="text-center my-3">Ou se connecter avec</p>
+
+            <!-- Google Sign-In -->
+            <div id="google-signin-button" class="d-flex justify-content-center mb-3"></div>
+
+            <div class="text-center mt-2">
+              <a href="#!" class="forgot-link">Mot de passe oublié ?</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+<app-toast-container-component></app-toast-container-component>
+

@@ -1,18 +1,16 @@
 ﻿using System.Security.Claims;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
 using TodoApi.Data;
 using TodoApi.Models;
-using static TodoApi.Models.AuthRequest;
 
 public static class AuthEndpoints
 {
     public static void MapAuthEndpoints(this IEndpointRouteBuilder app)
     {
+        var group = app.MapGroup("/api/v1/todos/auth");
         // -------------------------
         // SIGN UP (Email + Password)
         // -------------------------
-        app.MapPost("/auth/signup", async (AuthService auth, AuthRequest request) =>
+        group.MapPost("/signup", async (AuthService auth, AuthRequest request) =>
         {
             if (string.IsNullOrEmpty(request.Email) || string.IsNullOrEmpty(request.Password))
                 return Results.BadRequest("Email et mot de passe requis");
@@ -38,7 +36,7 @@ public static class AuthEndpoints
         // -------------------------
         // SIGN IN (Email + Password)
         // -------------------------
-        app.MapPost("/auth/signin", async (AuthService auth, AuthRequest request) =>
+        group.MapPost("/signin", async (AuthService auth, AuthRequest request) =>
         {
             if (string.IsNullOrEmpty(request.Email) || string.IsNullOrEmpty(request.Password))
                 return Results.BadRequest("Email et mot de passe requis");
@@ -65,7 +63,7 @@ public static class AuthEndpoints
         // -------------------------
         // GOOGLE LOGIN
         // -------------------------
-        app.MapPost("/auth/google", async (AuthService auth, AuthRequest request) =>
+        group.MapPost("/google", async (AuthService auth, AuthRequest request) =>
         {
             if (string.IsNullOrEmpty(request.Email) || string.IsNullOrEmpty(request.GoogleToken))
                 return Results.BadRequest("Email et Google token requis");
@@ -92,7 +90,7 @@ public static class AuthEndpoints
         // -------------------------
         // GET CURRENT USER
         // -------------------------
-        app.MapGet("/auth/me", async (AuthService auth, HttpContext context) =>
+        group.MapGet("/me", async (AuthService auth, HttpContext context) =>
         {
             var email = context.User?.FindFirst(c => c.Type == ClaimTypes.Email)?.Value;
             if (email == null)

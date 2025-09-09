@@ -7,9 +7,16 @@ import { TodoContainerComponent } from './features/todo-container-component/todo
 import { TodoListComponent } from './features/todo-list-component/todo-list-component';
 import { TodoFormComponent } from './features/todo-form-component/todo-form-component';
 import { TodoFilterComponent } from './features/todo-filter-component/todo-filter-component';
-import { FormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
-import { TodoLogin } from './features/todo-login/todo-login';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { HttpClientModule, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { SignIn } from './features/sign-in/sign-in';
+
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { authInterceptor } from '../app/core/interceptor/auth-interceptor';
+import { SignUp } from './features/sign-up/sign-up';
+import { ToastContainerComponent } from './features/toast-container-component/toast-container-component';
+import { Navbar } from './features/layout/navbar/navbar';
+
 
 @NgModule({
   declarations: [
@@ -18,16 +25,21 @@ import { TodoLogin } from './features/todo-login/todo-login';
     TodoListComponent,
     TodoFormComponent,
     TodoFilterComponent,
-    TodoLogin
+    SignIn,
+    SignUp,
+    ToastContainerComponent,
+    Navbar
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
-    FormsModule
+    FormsModule,
+    ReactiveFormsModule
   ],
   providers: [
-    provideBrowserGlobalErrorListeners()
+    provideBrowserGlobalErrorListeners(),
+    provideHttpClient(withInterceptorsFromDi())
   ],
   bootstrap: [App]
 })

@@ -3,8 +3,8 @@ export interface TodoItem {
   title?: string;
   description?: string;
   isComplete: boolean;
-  isOverdue?: boolean;    // ajouté
-  canToggle?: boolean;    // ajouté
+  isOverdue?: boolean;    
+  canToggle?: boolean;
   priority?: string;
   createdAt: string;
   lastModifiedAt: string;

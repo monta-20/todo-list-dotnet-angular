@@ -8,6 +8,11 @@
     <BuildOutputFolder>$(MSBuildProjectDirectory)\dist\todo-app\browser\</BuildOutputFolder>
   </PropertyGroup>
   <ItemGroup>
+    <Folder Include="src\app\core\interceptor\" />
+    <Folder Include="src\app\core\guards\" />
+    <Folder Include="src\app\core\services\Auth\" />
+    <Folder Include="src\app\core\services\GoogleAuthService\" />
+    <Folder Include="src\app\core\services\Toast\" />
     <Folder Include="src\app\core\services\to-do-list\" />
   </ItemGroup>
 </Project>

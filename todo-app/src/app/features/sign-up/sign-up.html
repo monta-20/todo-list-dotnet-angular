@@ -1,0 +1,81 @@
+<section class="bg-primary min-vh-100 d-flex align-items-center">
+  <div class="container">
+    <div class="row justify-content-center gy-4 align-items-center">
+      <!-- Partie illustration -->
+      <div class="col-12 col-md-6 text-center text-white">
+        <div class="p-4 rounded-4 bg-white bg-opacity-25 mb-4">
+          <h1 class="mb-3 fw-bold">Rejoignez To-Do List Pro</h1>
+          <p class="lead mb-0">
+            Créez votre compte et commencez à organiser vos tâches efficacement.
+            Profitez d’un outil moderne pour booster votre productivité !
+          </p>
+        </div>
+      </div>
+
+      <!-- Partie Sign Up -->
+      <div class="col-12 col-md-6 col-lg-5">
+        <div class="card shadow rounded-4 border-0 mx-auto">
+          <div class="card-body p-4">
+            <h3 class="mb-3 text-center">Créer un compte</h3>
+            <p class="mb-4 text-center">
+              Déjà inscrit ?
+              <button class="btn btn-outline-secondary btn-sm ms-2" (click)="goToSignIn()">
+                Se connecter
+              </button>
+            </p>
+
+            <form [formGroup]="signUpForm" (ngSubmit)="onSubmit()">
+              <!-- Nom -->
+              <div class="form-floating mb-3">
+                <input type="text" id="name" class="form-control" formControlName="name" placeholder="Votre nom" required>
+                <label for="name">Nom complet</label>
+                <div class="text-danger small" *ngIf="signUpForm.get('name')?.invalid && signUpForm.get('name')?.touched">
+                  Le nom est requis
+                </div>
+              </div>
+
+              <!-- Email -->
+              <div class="form-floating mb-3">
+                <input type="email" id="email" class="form-control" formControlName="email" placeholder="name@example.com" required>
+                <label for="email">Email</label>
+                <div class="text-danger small" *ngIf="signUpForm.get('email')?.invalid && signUpForm.get('email')?.touched">
+                  Email invalide
+                </div>
+              </div>
+
+              <!-- Mot de passe -->
+              <div class="form-floating mb-3">
+                <input type="password" id="password" class="form-control" formControlName="password" placeholder="Mot de passe" required>
+                <label for="password">Mot de passe</label>
+                <div class="text-danger small" *ngIf="signUpForm.get('password')?.errors?.['minlength']">
+                  Le mot de passe doit contenir au moins 6 caractères
+                </div>
+              </div>
+
+              <!-- Confirmation mot de passe -->
+              <div class="form-floating mb-3">
+                <input type="password" id="confirmPassword" class="form-control" formControlName="confirmPassword" placeholder="Confirmer le mot de passe" required>
+                <label for="confirmPassword">Confirmer le mot de passe</label>
+                <div class="text-danger small" *ngIf="signUpForm.errors?.['mismatch']">
+                  Les mots de passe ne correspondent pas
+                </div>
+              </div>
+
+              <button type="submit" class="btn btn-custom btn-lg w-auto mb-3 px-4 d-block mx-auto"
+                      [disabled]="signUpForm.invalid">
+                S'inscrire
+              </button>
+            </form>
+
+            <p class="text-center my-3">Ou s’inscrire avec</p>
+
+            <!-- Google Sign-Up -->
+            <div id="google-signin-button" class="d-flex justify-content-center mb-3"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<app-toast-container-component></app-toast-container-component>
