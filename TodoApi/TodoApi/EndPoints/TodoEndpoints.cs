@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Mvc;
 using TodoApi.Data;
 using TodoApi.Helpers;
 using TodoApi.Models;
@@ -10,39 +11,63 @@ namespace TodoApi.EndPoints
         public static void MapTodoEndpoints(this WebApplication app)
         {
             var group = app.MapGroup("/api/v1/todos").WithTags("TodoItems");
-            group.MapGet("/", async (TodoService service) =>
+
+            group.MapGet("/", async (ClaimsPrincipal user, TodoService service) =>
             {
-                return Results.Ok(await service.GetAllAsync());
+                if (!user.TryGetUserId(out var userId))
+                    return Results.Unauthorized();
+
+                var todos = await service.GetAllAsync(userId);
+                return Results.Ok(todos);
             });
 
-            group.MapGet("/{id}", async (long id, [FromServices] TodoService service) =>
+            group.MapGet("/{id}", async (long id, ClaimsPrincipal user, TodoService service) =>
             {
-                var todo = await service.GetByIdAsync(id);
+                if (!user.TryGetUserId(out var userId))
+                    return Results.Unauthorized();
+                var todo = await service.GetByIdAsync(id, userId);
                 return todo is not null ? Results.Ok(todo) : Results.NotFound();
             });
 
-            group.MapPost("/", async ([FromBody] TodoItem todo, [FromServices] TodoService service) =>
+            group.MapPost("/", async ([FromBody] TodoItem todo, ClaimsPrincipal user, TodoService service) =>
             {
-                var createdTodo = await service.CreateAsync(todo);
+                if (!user.TryGetUserId(out var userId))
+                    return Results.Unauthorized();
+                todo.UserId = userId;
+                var createdTodo = await service.CreateAsync(todo , userId);
                 return Results.Created($"/api/v1/todos/{createdTodo.Id}", createdTodo);
             });
 
-            group.MapPut("/{id}", async (long id, [FromBody] TodoUpdateDto dto, [FromServices] TodoService service) =>
+            group.MapPut("/{id}", async (long id, [FromBody] TodoUpdateDto dto, ClaimsPrincipal user, TodoService service) =>
             {
-                var updatedTodo = await service.UpdateAsync(id, dto);
+                if (!user.TryGetUserId(out var userId))
+                    return Results.Unauthorized();
+                var updatedTodo = await service.UpdateAsync(id, dto, userId);
                 return updatedTodo is not null ? Results.Ok(updatedTodo) : Results.NotFound();
             });
 
-            group.MapDelete("/{id}", async (long id, [FromServices] TodoService service) =>
+            group.MapDelete("/{id}", async (long id, ClaimsPrincipal user, TodoService service) =>
             {
-                var deleted = await service.DeleteAsync(id);
+                if (!user.TryGetUserId(out var userId))
+                    return Results.Unauthorized();
+                var deleted = await service.DeleteAsync(id, userId);
                 return deleted ? Results.NoContent() : Results.NotFound();
             });
 
-            group.MapGet("/filtered", async ([AsParameters] TodoQueryDto query, [FromServices]  TodoService service) =>
+            group.MapGet("/filtered", async ([AsParameters] TodoQueryDto query, ClaimsPrincipal user, TodoService service) =>
             {
-                var filteredTodos = await service.GetFilteredAsync(query);
+                if (!user.TryGetUserId(out var userId))
+                    return Results.Unauthorized();
+                var filteredTodos = await service.GetFilteredAsync(query, userId);
                 return Results.Ok(filteredTodos);
+            });
+
+            group.MapPatch("/{id}/toggle-complete", async (long id, ClaimsPrincipal user, TodoService service) =>
+            {
+                if (!user.TryGetUserId(out var userId))
+                    return Results.Unauthorized();
+                var updatedTodo = await service.ToggleCompleteAsync(id, userId);
+                return updatedTodo is not null ? Results.Ok(updatedTodo) : Results.NotFound();
             });
 
             group.MapGet("/metadata", () =>
@@ -53,13 +78,7 @@ namespace TodoApi.EndPoints
                     Categories = TodoHelpers.Categories
                 });
             });
-            group.MapPatch("/{id}/toggle-complete", async (long id, [FromServices] TodoService service) =>
-            {
-                var updatedTodo = await service.ToggleCompleteAsync(id);
-                return updatedTodo is not null
-                    ? Results.Ok(updatedTodo)
-                    : Results.NotFound();
-            });
         }
+
     }
 }

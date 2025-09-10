@@ -2,22 +2,29 @@ import { Injectable } from '@angular/core';
 import { AuthService } from '../Auth/auth-service';
 import { AuthResponse, AuthRequest } from '../../../models/Auth';
 import { environment } from '../../../../../environments/environment';
+import { ToastService } from '../Toast/toast.service';
 declare const google: any;
 @Injectable({
   providedIn: 'root'
 })
 export class GoogleAuthService {
   private clientId = environment.googleClientId;
-  constructor(private authService: AuthService) { }
 
-  initGoogleButton(callback: (res: AuthResponse) => void, errorCallback?: (err: any) => void) {
-    // Initialiser Google Sign-In
+  constructor(
+    private authService: AuthService,
+    private toast: ToastService
+  ) { }
+
+  initGoogleButton(
+    callback: (res: AuthResponse) => void,
+    errorCallback?: (err: any) => void
+  ) {
     google.accounts.id.initialize({
       client_id: this.clientId,
-      callback: (response: any) => this.handleGoogleResponse(response, callback, errorCallback)
+      callback: (response: any) =>
+        this.handleGoogleResponse(response, callback, errorCallback)
     });
 
-    // Afficher le bouton Google Sign-In
     const btn = document.getElementById('google-signin-button');
     if (btn) {
       google.accounts.id.renderButton(btn, {
@@ -28,9 +35,12 @@ export class GoogleAuthService {
     }
   }
 
-  private handleGoogleResponse(response: any, callback: (res: AuthResponse) => void, errorCallback?: (err: any) => void) {
+  private handleGoogleResponse(
+    response: any,
+    callback: (res: AuthResponse) => void,
+    errorCallback?: (err: any) => void
+  ) {
     try {
-      // Décoder le token pour récupérer email et name
       const payload: any = JSON.parse(atob(response.credential.split('.')[1]));
 
       const request: AuthRequest = {
@@ -42,16 +52,18 @@ export class GoogleAuthService {
       this.authService.googleLogin(request).subscribe({
         next: (res) => {
           this.authService.setToken(res.token!);
+          this.toast.show(`Bienvenue ${res.name}`, 'success', 3000);
           callback(res);
         },
         error: (err) => {
+          const msg = err.error?.message || 'Erreur Google Login';
+          this.toast.show(msg, 'error', 3000);
           if (errorCallback) errorCallback(err);
-          else alert(err.error?.message || 'Erreur Google Login');
         }
       });
     } catch (error) {
       console.error('Erreur lors du décodage du token Google:', error);
-      alert('Impossible de récupérer les informations Google.');
+      this.toast.show('Impossible de récupérer les informations Google.', 'error', 3000);
     }
   }
 }

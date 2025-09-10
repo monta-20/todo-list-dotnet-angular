@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ToDoList } from '../../core/services/to-do-list/to-do-list';
 import { TodoItem } from '../../models/TodoItem';
 import { TodoQuery } from '../../models/TodoQuery';
-import {  Router } from '@angular/router';
+import { Router } from '@angular/router';
 declare var bootstrap: any;
 @Component({
   selector: 'app-todo-container-component',
@@ -176,5 +176,4 @@ export class TodoContainerComponent implements OnInit {
   }
 
 }
-
 

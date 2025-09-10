@@ -11,6 +11,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
   // 1️⃣ Ajouter le token JWT si présent
   const token = authService.getToken();
+  console.log("➡️ Token utilisé :", token);
   let authReq = req;
   if (token) {
     authReq = req.clone({
@@ -21,7 +22,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   }
 
   // Gérer les erreurs globales
-  return next(req).pipe(
+  return next(authReq).pipe(
     catchError((error: any) => {
       if (error.status === 401) {
         alert('Vous devez vous reconnecter');

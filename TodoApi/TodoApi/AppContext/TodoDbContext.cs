@@ -10,5 +10,14 @@ namespace TodoApi.AppContext
        
         public DbSet<TodoItem> TodoItems { get; set; }
         public DbSet<User> Users { get; set; }
+        // Optionnal for customize the relationships between entities
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<User>()
+                .HasMany(u => u.TodoItems)
+                .WithOne(t => t.User)
+                .HasForeignKey(t => t.UserId)
+                .OnDelete(DeleteBehavior.Cascade); 
+        }
     }
 }

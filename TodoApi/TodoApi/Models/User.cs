@@ -4,7 +4,7 @@ namespace TodoApi.Models
 {
     public class User
     {
-        public int Id { get; set; }                 
+        public long Id { get; set; }                 
         public string Email { get; set; } = "";   
         public string Name { get; set; } = "";    
         public string? PasswordHash { get; set; } 
@@ -13,5 +13,9 @@ namespace TodoApi.Models
         public DateTime LastLoginAt { get; set; } = DateTime.UtcNow;
         public bool IsActive { get; set; } = true;
         public UserRole Role { get; set; } = UserRole.User;
+
+        // Relationships with TodoItem Many-to-One
+        public ICollection<TodoItem> TodoItems { get; set; } = new List<TodoItem>(); 
+
     }
 }

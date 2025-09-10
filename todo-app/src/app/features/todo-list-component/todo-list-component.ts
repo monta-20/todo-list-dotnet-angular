@@ -30,7 +30,6 @@ export class TodoListComponent {
         console.error('Erreur lors du toggle', err);
       }
     });
-    console.log('Toggle complete for todo id:', todo.dueDate);
   }
   trackByTodoId(index: number, todo: TodoItem): number {
     return todo.id; 

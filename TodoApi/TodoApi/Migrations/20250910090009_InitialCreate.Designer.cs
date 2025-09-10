@@ -12,8 +12,8 @@ using TodoApi.AppContext;
 namespace TodoApi.Migrations
 {
     [DbContext(typeof(TodoDbContext))]
-    [Migration("20250909092248_User-table")]
-    partial class Usertable
+    [Migration("20250910090009_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -63,18 +63,23 @@ namespace TodoApi.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)");
 
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("TodoItems");
                 });
 
             modelBuilder.Entity("TodoApi.Models.User", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("bigint");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -105,6 +110,22 @@ namespace TodoApi.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("TodoApi.Models.TodoItem", b =>
+                {
+                    b.HasOne("TodoApi.Models.User", "User")
+                        .WithMany("TodoItems")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("TodoApi.Models.User", b =>
+                {
+                    b.Navigation("TodoItems");
                 });
 #pragma warning restore 612, 618
         }

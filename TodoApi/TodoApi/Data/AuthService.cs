@@ -103,7 +103,8 @@ namespace TodoApi.Data
             if (string.IsNullOrEmpty(email))
                 return null;
 
-            return await _db.Users.FirstOrDefaultAsync(u => u.Email == email);
+            return await _db.Users.Include(u => u.TodoItems).FirstOrDefaultAsync(u => u.Email == email);
+        
         }
 
         // -------------------------

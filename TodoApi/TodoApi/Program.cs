@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
@@ -25,16 +26,29 @@ builder.Services.AddScoped<AuthService>();
 builder.Services.AddEndpointsApiExplorer();
 
 // -------------------------
-// Authentification Google + Cookie
+// Authentification unifiée
 // -------------------------
 var googleAuth = builder.Configuration.GetSection("Authentication:Google");
+var jwtSecret = builder.Configuration["Jwt:Secret"];
 
 builder.Services.AddAuthentication(options =>
 {
-    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
+    // Définit le schéma par défaut pour l'authentification des API
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 })
-.AddCookie()
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = false,
+        ValidateAudience = false,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtSecret))
+    };
+})
+.AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
 .AddGoogle(options =>
 {
     options.ClientId = googleAuth["ClientId"];
@@ -45,29 +59,7 @@ builder.Services.AddAuthentication(options =>
 });
 
 // -------------------------
-// JWT Authentication
-// -------------------------
-var jwtSecret = builder.Configuration["Jwt:Secret"];
-builder.Services.AddAuthentication()
-    .AddJwtBearer(options =>
-    {
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = false,
-            ValidateAudience = false,
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtSecret))
-        };
-    });
-
-// -------------------------
 // Authorization
-// -------------------------
-builder.Services.AddAuthorization();
-
-// -------------------------
-// Polices
 // -------------------------
 builder.Services.AddAuthorization(options =>
 {
@@ -95,7 +87,6 @@ var app = builder.Build();
 // Middleware
 // -------------------------
 app.UseCors("AllowAll");
-
 app.UseAuthentication();
 app.UseAuthorization();
 

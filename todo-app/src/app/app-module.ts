@@ -8,10 +8,8 @@ import { TodoListComponent } from './features/todo-list-component/todo-list-comp
 import { TodoFormComponent } from './features/todo-form-component/todo-form-component';
 import { TodoFilterComponent } from './features/todo-filter-component/todo-filter-component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { HttpClientModule, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { SignIn } from './features/sign-in/sign-in';
-
-import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi, HttpClientModule, withInterceptors } from '@angular/common/http';
 import { authInterceptor } from '../app/core/interceptor/auth-interceptor';
 import { SignUp } from './features/sign-up/sign-up';
 import { ToastContainerComponent } from './features/toast-container-component/toast-container-component';
@@ -39,8 +37,11 @@ import { Navbar } from './features/layout/navbar/navbar';
   ],
   providers: [
     provideBrowserGlobalErrorListeners(),
-    provideHttpClient(withInterceptorsFromDi())
+    provideHttpClient(
+      withInterceptors([authInterceptor])
+    ),
   ],
+  
   bootstrap: [App]
 })
 export class AppModule { }

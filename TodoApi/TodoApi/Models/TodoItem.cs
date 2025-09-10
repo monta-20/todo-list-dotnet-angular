@@ -27,5 +27,9 @@ namespace TodoApi.Models
         public bool IsOverdue => DueDate.HasValue && DueDate.Value.LocalDateTime.Date < DateTime.Now.Date;
         [NotMapped]
         public bool CanToggle => DueDate.HasValue && DueDate.Value.LocalDateTime.Date >= DateTime.Now.Date;
+
+        // Relationships with User One-to-Many
+        public long UserId { get; set; }
+        public User User { get; set; } = null; 
     }
 }

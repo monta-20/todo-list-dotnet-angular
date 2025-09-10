@@ -1,4 +1,6 @@
-﻿namespace TodoApi.Helpers
+﻿using System.Security.Claims;
+
+namespace TodoApi.Helpers
 {
     public static class TodoHelpers
     {
@@ -27,6 +29,19 @@
         {
             return !string.IsNullOrWhiteSpace(category) && Categories.Contains(category);
         }
-    }
+        public static bool TryGetUserId(this ClaimsPrincipal user, out long userId)
+        {
+            userId = 0;
 
+            // Essaie d'abord le claim NameIdentifier
+            var userIdClaim = user.FindFirstValue(ClaimTypes.NameIdentifier)
+                              ?? user.FindFirstValue("sub"); // pour Google OAuth
+
+            if (string.IsNullOrEmpty(userIdClaim))
+                return false;
+
+            return long.TryParse(userIdClaim, out userId);
+        }
+    }
 }
+
