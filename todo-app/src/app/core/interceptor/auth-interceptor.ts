@@ -8,10 +8,7 @@ import { AuthService } from '../services/Auth/auth-service';
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
   const router = inject(Router);
-
-  // 1️⃣ Ajouter le token JWT si présent
   const token = authService.getToken();
-  console.log("➡️ Token utilisé :", token);
   let authReq = req;
   if (token) {
     authReq = req.clone({
@@ -27,7 +24,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
       if (error.status === 401) {
         alert('Vous devez vous reconnecter');
         authService.clearToken();
-        router.navigate(['/sign-in']);
+        router.navigate(['/todo/login']);
       } else if (error.status === 403) {
         alert('Accès refusé');
       } else if (error.status === 400) {

@@ -1,10 +1,10 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using TodoApi.AppContext;
+using TodoApi.Background;
 using TodoApi.Data;
 using TodoApi.EndPoints;
 
@@ -20,11 +20,15 @@ builder.Services.AddDbContext<TodoDbContext>(options =>
 // -------------------------
 // Ajouter Services
 // -------------------------
-builder.Services.AddScoped<TodoService>();
-builder.Services.AddScoped<AuthService>();
-
+builder.Services.AddScoped< ITodoService,TodoService>();
+builder.Services.AddScoped< IAuthService,AuthService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddEndpointsApiExplorer();
 
+// -------------------------
+// Background Services
+// -------------------------
+builder.Services.AddHostedService<EmailReminderService>();
 // -------------------------
 // Authentification unifiée
 // -------------------------

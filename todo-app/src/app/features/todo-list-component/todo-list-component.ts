@@ -30,6 +30,7 @@ export class TodoListComponent {
         console.error('Erreur lors du toggle', err);
       }
     });
+    console.log(`Toggled complete for todo id with value of overdue is ${todo.isOverdue} and staus of task is ${todo.isComplete}.`);
   }
   trackByTodoId(index: number, todo: TodoItem): number {
     return todo.id; 
