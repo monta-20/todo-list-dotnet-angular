@@ -25,14 +25,14 @@ namespace TodoApi.Background
                         var db = scope.ServiceProvider.GetRequiredService<TodoDbContext>();
                         var emailService = scope.ServiceProvider.GetRequiredService<IEmailService>();
 
-                        var today = DateTime.UtcNow.Date;
+                        var today = DateTime.Now.Date;
                         var tomorrow = today.AddDays(1);
 
                         // Rappel 1 jour avant échéance
                         var dueTomorrow = await db.TodoItems
                             .Include(t => t.User)
                             .Where(t => t.DueDate.HasValue &&
-                                        t.DueDate.Value.Date == tomorrow &&
+                                        t.DueDate.Value.LocalDateTime.Date == tomorrow &&
                                         !t.IsComplete)
                             .ToListAsync();
 
@@ -48,7 +48,7 @@ namespace TodoApi.Background
                         var overdueTodos = await db.TodoItems
                             .Include(t => t.User)
                             .Where(t => t.DueDate.HasValue &&
-                                        t.DueDate.Value.Date < today &&
+                                        t.DueDate.Value.LocalDateTime.Date < today &&
                                         !t.IsComplete)
                             .ToListAsync();
 
@@ -64,7 +64,7 @@ namespace TodoApi.Background
                         var completedToday = await db.TodoItems
                             .Include(t => t.User)
                             .Where(t => t.IsComplete &&
-                                        t.LastModifiedAt.Date == today)
+                                        t.LastModifiedAt.LocalDateTime.Date == today)
                             .ToListAsync();
 
                         foreach (var todo in completedToday)

@@ -1,0 +1,219 @@
+<div class="todo-card-container">
+  <!-- Header avec bouton Nouvelle tâche -->
+  <div class="card-header d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h1><i class="fas fa-clipboard-list"></i> Gestionnaire de Tâches</h1>
+      <p>Organisez et suivez vos tâches efficacement</p>
+    </div>
+    <button class="btn-primary btn-create" (click)="router.navigate(['/todo/create'])">
+      <i class="fas fa-plus"></i>
+      <span>Nouvelle tâche</span>
+    </button>
+  </div>
+
+  <!-- Filter des todos -->
+  <div class="filter-container">
+    <!-- Header cliquable pour toggle -->
+    <div class="filter-header" (click)="toggleFilterExpansion()">
+      <i class="fas fa-filter"></i>
+      <h5>Filtres et Tri</h5>
+      <i class="fas" [ngClass]="filterExpanded ? 'fa-chevron-up' : 'fa-chevron-down'" style="margin-left:auto"></i>
+    </div>
+
+    <div class="filter-body" *ngIf="filterExpanded">
+        <div class="row g-3">
+          <!-- Recherche -->
+          <div class="col-md-6 col-lg-3">
+            <div class="filter-group">
+              <label for="search" class="filter-label">
+                <i class="fas fa-search"></i> Recherche
+              </label>
+              <div class="input-wrapper">
+                <input id="search" type="text" class="filter-input"
+                       [(ngModel)]="query.search" placeholder="Titre ou description">
+              </div>
+            </div>
+          </div>
+
+          <!-- Priorité -->
+          <div class="col-md-6 col-lg-2">
+            <div class="filter-group">
+              <label for="priority" class="filter-label">
+                <i class="fas fa-flag"></i> Priorité
+              </label>
+              <div class="select-wrapper">
+                <select id="priority" class="filter-select" [(ngModel)]="query.priority">
+                  <option value="">Toutes</option>
+                  <option value="Haute">Haute</option>
+                  <option value="Moyenne">Moyenne</option>
+                  <option value="Basse">Basse</option>
+                </select>
+                <i class="fas fa-chevron-down"></i>
+              </div>
+            </div>
+          </div>
+
+          <!-- Catégorie -->
+          <div class="col-md-6 col-lg-2">
+            <div class="filter-group">
+              <label for="category" class="filter-label">
+                <i class="fas fa-tag"></i> Catégorie
+              </label>
+              <div class="input-wrapper">
+                <input id="category" type="text" class="filter-input"
+                       [(ngModel)]="query.category" placeholder="Catégorie">
+              </div>
+            </div>
+          </div>
+
+          <!-- Statut -->
+          <div class="col-md-6 col-lg-2">
+            <div class="filter-group">
+              <label for="isComplete" class="filter-label">
+                <i class="fas fa-check-circle"></i> Statut
+              </label>
+              <div class="select-wrapper">
+                <select id="isComplete" class="filter-select" [(ngModel)]="query.isComplete">
+                  <option [ngValue]="undefined">Tous</option>
+                  <option [ngValue]="true">Complet</option>
+                  <option [ngValue]="false">Incomplet</option>
+                </select>
+                <i class="fas fa-chevron-down"></i>
+              </div>
+            </div>
+          </div>
+
+          <!-- Trier par -->
+          <div class="col-md-6 col-lg-2">
+            <div class="filter-group">
+              <label for="sortBy" class="filter-label">
+                <i class="fas fa-sort"></i> Trier par
+              </label>
+              <div class="select-wrapper">
+                <select id="sortBy" class="filter-select" [(ngModel)]="query.sortBy">
+                  <option value="CreatedAt">Date de création</option>
+                  <option value="DueDate">Date d'échéance</option>
+                  <option value="Priority">Priorité</option>
+                  <option value="Title">Titre</option>
+                </select>
+                <i class="fas fa-chevron-down"></i>
+              </div>
+            </div>
+          </div>
+
+          <!-- Ordre -->
+          <div class="col-md-6 col-lg-1">
+            <div class="filter-group">
+              <label class="filter-label">
+                <i class="fas fa-sort-amount-down"></i> Ordre
+              </label>
+              <div class="toggle-wrapper">
+                <label class="toggle-switch">
+                  <input type="checkbox" [(ngModel)]="query.descending">
+                  <span class="toggle-slider"></span>
+                </label>
+                <span class="toggle-label">{{ query.descending ? 'Desc' : 'Asc' }}</span>
+              </div>
+            </div>
+          
+        </div>
+
+        <!-- Boutons -->
+        <div class="filter-actions">
+          <button class="btn-filter btn-reset" (click)="resetFilter()">
+            <i class="fas fa-redo"></i> Réinitialiser
+          </button>
+          <button class="btn-filter btn-apply" (click)="applyFilter()">
+            <i class="fas fa-check"></i> Appliquer
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Liste des todos -->
+  <div *ngIf="!loading && todos.length > 0" class="todo-list">
+    <div *ngFor="let todo of todos ; trackBy: trackByTodoId" class="todo-item"
+         [class.status-complete]="todo.isComplete && !todo.isOverdue"
+         [class.status-incomplete]="!todo.isComplete && !todo.isOverdue"
+         [class.status-overdue]="todo.isOverdue">
+
+      <div class="todo-content">
+        <div class="todo-header">
+          <h5 class="todo-title">{{ todo.title }}</h5>
+          <div class="todo-actions">
+            <button *ngIf="todo.canToggle"
+                    class="btn-action btn-edit"
+                    (click)="router.navigate(['/todo/edit', todo.id])"
+                    title="Modifier">
+              <i class="fa-regular fa-pen-to-square"></i>
+            </button>
+            <button class="btn-action btn-delete" (click)="deleteTodo(todo)" title="Supprimer">
+              <i class="fa-duotone fa-solid fa-trash"></i>
+            </button>
+          </div>
+        </div>
+
+        <p class="todo-description">{{ todo.description }}</p>
+
+        <div class="todo-meta">
+          <span class="todo-badge category">
+            <i class="fas fa-tag"></i> {{ todo.category || 'Sans catégorie' }}
+          </span>
+          <span class="todo-badge priority"
+                [class.priority-high]="todo.priority === 'Haute'"
+                [class.priority-medium]="todo.priority === 'Moyenne'"
+                [class.priority-low]="todo.priority === 'Basse'">
+            <i class="fas fa-flag"></i> {{ todo.priority || 'Non définie' }}
+          </span>
+          <span class="todo-badge status"
+                [class.status-complete]="todo.isComplete && !todo.isOverdue"
+                [class.status-overdue]="todo.isOverdue"
+                [class.status-incomplete]="!todo.isComplete && !todo.isOverdue">
+            <i class="fas"
+               [ngClass]="{
+                 'fa-check-circle': todo.isComplete && !todo.isOverdue,
+                 'fa-exclamation-circle': todo.isOverdue,
+                 'fa-clock': !todo.isComplete && !todo.isOverdue
+               }">
+            </i>
+            {{ todo.isOverdue ? 'Échue' : (todo.isComplete ? 'Terminé' : 'En cours') }}
+          </span>
+          <span class="todo-badge due-date">
+            <i class="fas fa-calendar-day"></i> {{ todo.dueDate | date:'dd/MM/yyyy' }}
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pagination -->
+  <div class="pagination-section" *ngIf="totalPages && totalPages > 1">
+    <div class="pagination-modern">
+      <button class="pagination-btn"
+              [class.disabled]="query.page === 1"
+              (click)="changePage(-1)">
+        <i class="fas fa-chevron-left"></i>
+      </button>
+
+      <div class="pagination-info">
+        <span>Page {{ query.page }} sur {{ totalPages }}</span>
+      </div>
+
+      <button class="pagination-btn"
+              [class.disabled]="query.page === totalPages"
+              (click)="changePage(1)">
+        <i class="fas fa-chevron-right"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Message pas de tâches -->
+  <div *ngIf="!loading && todos.length === 0" class="empty-state">
+    <div class="empty-icon">
+      <i class="fas fa-clipboard-list"></i>
+    </div>
+    <h4>Aucune tâche pour le moment</h4>
+    <p>Commencez par ajouter une nouvelle tâche à votre liste</p>
+  </div>
+</div>

@@ -20,8 +20,8 @@ builder.Services.AddDbContext<TodoDbContext>(options =>
 // -------------------------
 // Ajouter Services
 // -------------------------
-builder.Services.AddScoped< ITodoService,TodoService>();
-builder.Services.AddScoped< IAuthService,AuthService>();
+builder.Services.AddScoped<TodoService>();
+builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddEndpointsApiExplorer();
 

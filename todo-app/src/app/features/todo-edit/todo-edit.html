@@ -1,0 +1,97 @@
+<div class="form-container">
+  <form (ngSubmit)="onSubmit()" #todoForm="ngForm" class="modern-form card" *ngIf="!loading">
+    <div class="card-header text-center">
+      <h2><i class="fas fa-edit me-2"></i> Modifier la tâche</h2>
+      <p>Modifiez les informations de votre tâche et mettez-la à jour</p>
+    </div>
+
+
+
+    <div class="card-body">
+      <!-- Titre -->
+      <div class="col-md-12 mb-3">
+        <label for="title" class="form-label fw-semibold">
+          Titre <span class="text-danger">*</span>
+        </label>
+        <div class="input-group">
+          <span class="input-group-text">
+            <i class="fas fa-heading"></i>
+          </span>
+          <input id="title" type="text" class="form-control"
+                 [(ngModel)]="todo.title" name="title"
+                 required placeholder="Donnez un titre à votre tâche">
+        </div>
+        <div *ngIf="todoForm.submitted && !todo.title" class="text-danger small mt-1">
+          Le titre est obligatoire
+        </div>
+      </div>
+
+      <!-- Description -->
+      <div class="mb-3">
+        <label for="description" class="form-label fw-semibold">Description</label>
+        <div class="input-group">
+          <span class="input-group-text">
+            <i class="fas fa-align-left"></i>
+          </span>
+          <textarea id="description" class="form-control"
+                    [(ngModel)]="todo.description" name="description"
+                    rows="3" placeholder="Décrivez votre tâche..."></textarea>
+        </div>
+      </div>
+
+      <!-- Priorité & Catégorie -->
+      <div class="d-flex gap-3 mb-3">
+        <div class="flex-fill">
+          <label for="priority" class="form-label fw-semibold">Priorité <span class="text-danger">*</span></label>
+          <select id="priority" class="form-select" [(ngModel)]="todo.priority" name="priority" required>
+            <option value="" disabled>Sélectionnez...</option>
+            <option *ngFor="let p of priorities" [value]="p">{{ p }}</option>
+          </select>
+          <div *ngIf="todoForm.submitted && !todo.priority" class="text-danger small mt-1">
+            La priorité est obligatoire
+          </div>
+        </div>
+
+        <div class="flex-fill">
+          <label for="category" class="form-label fw-semibold">Catégorie <span class="text-danger">*</span></label>
+          <select id="category" class="form-select" [(ngModel)]="todo.category" name="category" required>
+            <option value="" disabled>Sélectionnez...</option>
+            <option *ngFor="let c of categories" [value]="c">{{ c }}</option>
+          </select>
+          <div *ngIf="todoForm.submitted && !todo.category" class="text-danger small mt-1">
+            La catégorie est obligatoire
+          </div>
+        </div>
+      </div>
+
+
+      <!-- Date d'échéance -->
+      <div class="col-md-12 mb-3">
+        <div class="form-floating">
+          <input type="date" class="form-control"
+                 id="dueDate"
+                 [(ngModel)]="todo.dueDate"
+                 name="dueDate"
+                 [min]="today"
+                 required>
+          <label for="dueDate">
+            <i class="fas fa-calendar-alt me-2"></i>
+            Date d'échéance <span class="text-danger">*</span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Boutons -->
+    <div class="card-footer d-flex justify-content-end gap-2">
+      <button type="button" class="btn btn-outline-secondary rounded-pill px-4"
+              (click)="onCancel()">
+        <i class="fas fa-times me-1"></i> Annuler
+      </button>
+      <button type="submit" class="btn btn-primary rounded-pill px-4"
+              [disabled]="todoForm.invalid">
+        <i class="fas fa-sync me-1"></i> Mettre à jour
+      </button>
+    </div>
+  </form>
+</div>

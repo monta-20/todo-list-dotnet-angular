@@ -1,0 +1,82 @@
+/* Container centré */
+.form-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 30px 20px;
+  min-height: 100vh;
+  background: #f5f7fa;
+}
+
+/* Card moderne */
+.modern-form.card {
+  width: 100%;
+  max-width: 600px;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.modern-form .card-header {
+  padding: 24px;
+  border-bottom: 1px solid #eee;
+}
+
+  .modern-form .card-header h2 {
+    margin-bottom: 8px;
+    font-size: 1.5rem;
+  }
+
+  .modern-form .card-header p {
+    color: #666;
+    font-size: 0.9rem;
+  }
+
+.modern-form .card-body {
+  padding: 24px;
+}
+
+.modern-form .card-footer {
+  padding: 16px 24px;
+  border-top: 1px solid #eee;
+}
+
+.modern-form .form-control,
+.modern-form .form-select {
+  border-radius: 8px;
+  box-shadow: none;
+  transition: all 0.2s;
+}
+
+  .modern-form .form-control:focus,
+  .modern-form .form-select:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.2rem rgba(13,110,253,.25);
+  }
+
+.modern-form .input-group-text {
+  background: #f0f2f5;
+  border-radius: 8px 0 0 8px;
+}
+
+.btn-primary {
+  background-color: #003D59;
+  border-radius: 8px;
+  transition: 0.2s;
+}
+
+  .btn-primary:hover {
+    background-color: #0b5ed7;
+    transform: translateY(-2px);
+  }
+
+.btn-outline-secondary {
+  border-radius: 8px;
+}
+
+.d-flex.gap-3 > div {
+  flex: 1;
+}
