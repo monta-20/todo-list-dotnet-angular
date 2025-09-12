@@ -1,21 +1,43 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <div class="container-fluid">
-    <a class="navbar-brand" routerLink="/todo">To-Do List</a>
+<nav class="modern-navbar">
+  <div class="navbar-container">
+    <a class="navbar-brand" routerLink="/todo">GoalCheck</a>
 
-    <div class="collapse navbar-collapse">
-      <ul class="navbar-nav ms-auto">
-        <li class="nav-item" *ngIf="isLoggedIn">
-          <button class="btn btn-outline-danger" (click)="logout()">
-            Déconnexion
-          </button>
-        </li>
-        <li class="nav-item" *ngIf="!isLoggedIn">
-          <a class="nav-link" routerLink="/todo/login">Connexion</a>
-        </li>
-        <li class="nav-item" *ngIf="!isLoggedIn">
-          <a class="nav-link" routerLink="/todo/signup">Inscription</a>
-        </li>
-      </ul>
-    </div>
+    <button class="navbar-toggle" (click)="toggleMenu()">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+
+    <ul class="navbar-nav" [class.active]="menuOpen">
+      <!-- Utilisateur connecté -->
+      <li class="nav-item d-flex align-items-center ms-auto" *ngIf="isLoggedIn">
+        <span class="navbar-username me-2">{{ username }}</span>
+
+        <!-- Bouton liste utilisateurs visible seulement pour admin -->
+        <button class="btn btn-users me-2" *ngIf="isAdmin" (click)="showUsers()">
+          <i class="fas fa-users me-1"></i> Utilisateurs
+        </button>
+
+        <button class="btn-logout" (click)="logout()">
+          <i class="fas fa-sign-out-alt"></i>
+          Déconnexion
+        </button>
+      </li>
+
+
+      <!-- Non connecté -->
+      <li class="nav-item" *ngIf="!isLoggedIn">
+        <a class="nav-link" routerLink="/todo/login" (click)="menuOpen = false">
+          <i class="fas fa-sign-in-alt"></i>
+          Connexion
+        </a>
+      </li>
+      <li class="nav-item" *ngIf="!isLoggedIn">
+        <a class="nav-link" routerLink="/todo/signup" (click)="menuOpen = false">
+          <i class="fas fa-user-plus"></i>
+          Inscription
+        </a>
+      </li>
+    </ul>
   </div>
 </nav>

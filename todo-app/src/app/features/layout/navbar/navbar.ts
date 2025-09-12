@@ -11,6 +11,12 @@ import { Router } from '@angular/router';
 })
 export class Navbar {
 
+  menuOpen: boolean = false;
+  username: string = '';
+  isAdmin = false;
+  toggleMenu(): void {
+    this.menuOpen = !this.menuOpen;
+  }
   isLoggedIn = false;
 
   constructor(
@@ -23,10 +29,24 @@ export class Navbar {
     // Vérifie si l'utilisateur est connecté au chargement
     this.isLoggedIn = !!this.authService.getToken();
 
-    // Optionnel : mise à jour automatique avec BehaviorSubject
+    // mise à jour automatique avec BehaviorSubject
     this.authService.loggedIn$.subscribe(status => {
       this.isLoggedIn = status;
     });
+    this.authService.getCurrentUser().subscribe({
+      next: (user) => {
+        this.username = user.name;
+        this.isAdmin = user.role === 'Admin';
+        this.isLoggedIn = true;
+      },
+      error: () => {
+        this.isLoggedIn = false;
+      }
+    });
+  }
+
+  showUsers() {
+    this.router.navigate(['/todo/users']);
   }
 
   logout() {

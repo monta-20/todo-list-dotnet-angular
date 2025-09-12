@@ -7,6 +7,7 @@ import { noAuthGuard } from './core/guards/no-auth-guard';
 import { TodoList } from './features/todo-list/todo-list';
 import { TodoCreate } from './features/todo-create/todo-create';
 import { TodoEdit } from './features/todo-edit/todo-edit';
+import { UserList } from './features/user-list/user-list';
 
 const routes: Routes = [
   { path: 'todo', component: TodoList, canActivate: [authGuard] }, 
@@ -14,6 +15,7 @@ const routes: Routes = [
   { path: 'todo/edit/:id', component: TodoEdit, canActivate: [authGuard] },
   { path: 'todo/login', component: SignIn, canActivate: [noAuthGuard] },
   { path: 'todo/signup', component: SignUp, canActivate: [noAuthGuard] },
+  { path: 'todo/users', component: UserList, canActivate: [authGuard] },
   { path: '**', redirectTo: 'todo/login' }
 ];
 

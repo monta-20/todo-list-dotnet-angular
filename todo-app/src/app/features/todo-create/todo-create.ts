@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { TodoItem } from '../../models/TodoItem';
 import { Router } from '@angular/router';
 import { ToDoList } from '../../core/services/to-do-list/to-do-list';
+import { ToastService } from '../../core/services/Toast/toast.service';
 
 @Component({
   selector: 'app-todo-create',
@@ -9,6 +10,7 @@ import { ToDoList } from '../../core/services/to-do-list/to-do-list';
   templateUrl: './todo-create.html',
   styleUrl: './todo-create.css'
 })
+
 export class TodoCreate implements OnInit {
   priorities: string[] = [];
   categories: string[] = [];
@@ -26,7 +28,11 @@ export class TodoCreate implements OnInit {
     category: ''
   };
 
-  constructor(private todoService: ToDoList, private router: Router) { }
+  constructor(
+    private todoService: ToDoList,
+    private router: Router,
+    private toast: ToastService
+  ) { }
 
   ngOnInit(): void {
     this.todoService.getMetadata().subscribe(data => {
@@ -43,11 +49,21 @@ export class TodoCreate implements OnInit {
 
     this.todoService.create(this.todo).subscribe({
       next: () => {
-        alert('✅ Tâche créée avec succès !');
-        this.router.navigate(['/todo']);
+        // Toast succès
+        this.toast.show(`Tâche "${this.todo.title}" créée avec succès !`, 'success', 2000);
+
+        // Redirection après un petit délai
+        setTimeout(() => {
+          this.router.navigate(['/todo']);
+        }, 1500);
       },
       error: (err) => {
-        console.error('❌ Erreur lors de la création', err);
+        // Toast erreur
+        this.toast.show(
+          err.error?.message || 'Impossible de créer la tâche.',
+          'error',
+          2000
+        );
       }
     });
   }

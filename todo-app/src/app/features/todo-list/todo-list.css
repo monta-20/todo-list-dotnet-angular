@@ -116,6 +116,9 @@
 .filter-input,
 .filter-select {
   width: 100%;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
   padding: 6px 10px;
   border-radius: 8px;
   border: 1px solid #ccc;
@@ -414,13 +417,17 @@
   }
 
   .todo-badge.status-complete {
-    background-color: rgba(40, 167, 69, 0.15);
+    background-color: #4FA268;
     color: var(--success);
   }
 
   .todo-badge.status-incomplete {
-    background-color: rgba(255, 193, 7, 0.2);
-    color: #856404;
+    background-color: #97C1F1; 
+    color: #1F7CE6;
+  }
+  .todo-badge.status-overdue {
+    background-color: #000;
+    color: #fff;
   }
 
   .todo-badge.due-date {

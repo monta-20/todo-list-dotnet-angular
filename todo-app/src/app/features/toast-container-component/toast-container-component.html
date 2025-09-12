@@ -1,16 +1,23 @@
 <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1200">
   <div *ngFor="let toast of toastService.toasts"
-       class="toast show mb-2 align-items-center text-white"
+       class="toast show mb-3 d-flex align-items-center shadow-lg animate-toast"
        [ngClass]="{
-         'bg-success': toast.type === 'success',
-         'bg-danger': toast.type === 'error',
-         'bg-info': toast.type === 'info',
-         'bg-warning text-dark': toast.type === 'warning'
+         'toast-success': toast.type === 'success',
+         'toast-error': toast.type === 'error',
+         'toast-info': toast.type === 'info',
+         'toast-warning': toast.type === 'warning'
        }"
        role="alert" aria-live="assertive" aria-atomic="true">
-    <div class="d-flex">
-      <div class="toast-body">{{ toast.message }}</div>
+
+    <!-- Icône -->
+    <div class="me-3 fs-4">
+      <i *ngIf="toast.type === 'success'" class="fas fa-check-circle"></i>
+      <i *ngIf="toast.type === 'error'" class="fas fa-times-circle"></i>
+      <i *ngIf="toast.type === 'info'" class="fas fa-info-circle"></i>
+      <i *ngIf="toast.type === 'warning'" class="fas fa-exclamation-triangle"></i>
     </div>
+
+    <!-- Message -->
+    <div class="toast-body fw-semibold">{{ toast.message }}</div>
   </div>
 </div>
-

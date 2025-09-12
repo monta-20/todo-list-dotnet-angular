@@ -23,33 +23,6 @@ export class SignIn implements AfterViewInit {
     private router: Router,
     private ngZone: NgZone
   ) { }
-
-  ngAfterViewInit(): void {
-    // Initialisation du bouton Google
-    this.googleAuth.initGoogleButton(
-      (res: AuthResponse) => {
-        this.ngZone.run(() => {
-          this.authService.setToken(res.token!);
-          this.user = res;
-
-          // Affiche le toast pour 3 secondes
-          this.toast.show(`Bienvenue ${res.name}`, 'success', 3000);
-
-          // Navigue après 3 secondes
-          setTimeout(() => {
-            this.router.navigate(['/todo']);
-          }, 3000);
-        });
-      },
-      (err) => {
-        this.ngZone.run(() => {
-          this.toast.show('Erreur Google Sign-In', 'error', 3000);
-        });
-      }
-    );
-  }
-
-
   // Connexion classique avec email/password
   onSignIn() {
     const request: AuthRequest = { email: this.email, password: this.password };
@@ -59,29 +32,77 @@ export class SignIn implements AfterViewInit {
         this.authService.setToken(res.token!);
         this.user = res;
 
-        // Affiche le toast
-        this.toast.show(`Bienvenue ${res.name}`, 'success', 3000);
+        // Toast de succès
+        this.toast.show(
+          `Bienvenue ${res.name} ! Ravi de vous revoir.`,
+          'success',
+          3000
+        );
 
-        // Navigue après 3 secondes
+        // Redirection après 3s
         setTimeout(() => {
           this.router.navigate(['/todo']);
         }, 3000);
       },
       error: (err) =>
-        this.toast.show(err.error?.message || 'Erreur lors de la connexion', 'error', 3000)
+        this.toast.show(
+          `${err.error?.message || 'Impossible de se connecter. Vérifiez vos identifiants.'}`,
+          'error',
+          3000
+        )
     });
   }
 
+  // Google Sign-In
+  ngAfterViewInit(): void {
+    this.googleAuth.initGoogleButton(
+      (res: AuthResponse) => {
+        this.ngZone.run(() => {
+          this.authService.setToken(res.token!);
+          this.user = res;
+
+          this.toast.show(
+            `Connexion réussie via Google. Bienvenue ${res.name} !`,
+            'success',
+            3000
+          );
+
+          setTimeout(() => {
+            this.router.navigate(['/todo']);
+          }, 3000);
+        });
+      },
+      (err) => {
+        this.ngZone.run(() => {
+          this.toast.show(
+            `Une erreur est survenue avec Google Sign-In. Veuillez réessayer.`,
+            'error',
+            3000
+          );
+        });
+      }
+    );
+  }
 
   // Déconnexion
   logout() {
     this.authService.clearToken();
     this.user = undefined;
-    this.toast.show('Déconnexion réussie', 'info');
+
+    this.toast.show(
+      'Vous êtes maintenant déconnecté. À bientôt !',
+      'info'
+    );
   }
 
   // Redirection vers SignUp
   goToSignUp() {
+    this.toast.show(
+      'Créons un compte ensemble !',
+      'info',
+      2000
+    );
     this.router.navigate(['/todo/signup']);
   }
+
 }

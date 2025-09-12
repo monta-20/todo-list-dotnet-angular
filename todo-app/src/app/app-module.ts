@@ -12,6 +12,8 @@ import { Navbar } from './features/layout/navbar/navbar';
 import { TodoList } from './features/todo-list/todo-list';
 import { TodoCreate } from './features/todo-create/todo-create';
 import { TodoEdit } from './features/todo-edit/todo-edit';
+import { ConfirmContainerComponent } from './features/confirm-container-component/confirm-container-component';
+import { UserList } from './features/user-list/user-list';
 
 
 @NgModule({
@@ -23,7 +25,9 @@ import { TodoEdit } from './features/todo-edit/todo-edit';
     Navbar,
     TodoList,
     TodoCreate,
-    TodoEdit
+    TodoEdit,
+    ConfirmContainerComponent,
+    UserList
   ],
   imports: [
     BrowserModule,

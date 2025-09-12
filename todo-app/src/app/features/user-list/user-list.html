@@ -1,0 +1,132 @@
+<div class="users-modern-container">
+  <!-- En-tête avec recherche et filtres -->
+  <div class="modern-header">
+    <h2 class="modern-title">Gestion des Utilisateurs</h2>
+
+    <div class="search-filter-container">
+      <div class="search-box">
+        <i class="fas fa-search search-icon"></i>
+        <input type="text" [(ngModel)]="search" placeholder="Rechercher par nom ou email..."
+               class="modern-search-input" (keyup.enter)="onSearch()" />
+        <button class="modern-search-btn" (click)="onSearch()">Rechercher</button>
+      </div>
+
+      <div class="filter-section">
+        <div class="filter-dropdown">
+          <select class="modern-filter-select" [(ngModel)]="filterRole" (change)="loadUsers()">
+            <option value="">Tous les rôles</option>
+            <option value="Admin">Administrateur</option>
+            <option value="User">Utilisateur</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tableau moderne -->
+  <div class="modern-table-container">
+    <div class="table-responsive">
+      <table class="modern-table">
+        <thead>
+          <tr>
+            <th (click)="sort('name')" class="sortable-header">
+              <div class="header-content">
+                <span>Nom</span>
+                <i *ngIf="sortBy==='name'" [class]="descending ? 'fas fa-chevron-down' : 'fas fa-chevron-up'"></i>
+                <i *ngIf="sortBy!=='name'" class="fas fa-sort"></i>
+              </div>
+            </th>
+            <th (click)="sort('email')" class="sortable-header">
+              <div class="header-content">
+                <span>Email</span>
+                <i *ngIf="sortBy==='email'" [class]="descending ? 'fas fa-chevron-down' : 'fas fa-chevron-up'"></i>
+                <i *ngIf="sortBy!=='email'" class="fas fa-sort"></i>
+              </div>
+            </th>
+            <th (click)="sort('role')" class="sortable-header">
+              <div class="header-content">
+                <span>Rôle</span>
+                <i *ngIf="sortBy==='role'" [class]="descending ? 'fas fa-chevron-down' : 'fas fa-chevron-up'"></i>
+                <i *ngIf="sortBy!=='role'" class="fas fa-sort"></i>
+              </div>
+            </th>
+            <th>
+              <div class="header-content">
+                <span>Créé le</span>
+              </div>
+            </th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let user of filteredUsers" class="modern-table-row">
+            <td class="user-info-cell">
+              <div class="user-avatar">
+                {{ user.name | slice:0:1 | uppercase }}
+              </div>
+              <div class="user-details">
+                <div class="user-name">{{ user.name }}</div>
+              </div>
+            </td>
+            <td class="user-email">{{ user.email }}</td>
+            <td>
+              <span class="role-badge" [ngClass]="'role-' + user.role">{{ user.role }}</span>
+            </td>
+            <td class="date-cell">{{ user.createdAt | date:'dd/MM/yyyy' }}</td>
+            <td class="action-cell">
+              <button class="action-btn view-btn" title="Voir détails">
+                <i class="fas fa-eye"></i>
+              </button>
+              <button class="action-btn edit-btn" title="Modifier">
+                <i class="fas fa-edit"></i>
+              </button>
+            </td>
+          </tr>
+          <tr *ngIf="filteredUsers.length === 0">
+            <td colspan="5" class="no-data">
+              <div class="no-data-content">
+                <i class="fas fa-users no-data-icon"></i>
+                <h3>Aucun utilisateur trouvé</h3>
+                <p>Essayez de modifier vos critères de recherche</p>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Pagination moderne -->
+  <div class="modern-pagination">
+    <div class="pagination-info">
+      Affichage de {{ (page-1)*pageSize + 1 }} à {{ page * pageSize > totalItems ? totalItems : page * pageSize }} sur {{ totalItems }} utilisateurs
+    </div>
+
+    <div class="pagination-controls">
+      <button class="pagination-btn" (click)="changePage(-1)" [disabled]="page===1">
+        <i class="fas fa-chevron-left"></i>
+      </button>
+
+      <div class="page-numbers">
+        <span *ngFor="let p of getPageNumbers()"
+              [class.active]="p === page"
+              (click)="goToPage(p)"
+              class="page-number">
+          {{ p }}
+        </span>
+        <span *ngIf="totalPages > 5 && page < totalPages - 2" class="page-ellipsis">...</span>
+        <span *ngIf="totalPages > 1 && page <= totalPages - 2"
+              (click)="goToPage(totalPages)"
+              class="page-number">
+          {{ totalPages }}
+        </span>
+      </div>
+
+      <button class="pagination-btn" (click)="changePage(1)" [disabled]="page >= totalPages">
+        <i class="fas fa-chevron-right"></i>
+      </button>
+    </div>
+
+    
+  </div>
+</div>

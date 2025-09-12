@@ -12,13 +12,13 @@ namespace TodoApi.Data
     {
         private readonly TodoDbContext _db;
         private readonly string _jwtSecret;
-        private readonly List<string> _adminEmails;
+        private readonly string _adminEmail;
 
         public AuthService(TodoDbContext db, IConfiguration config)
         {
             _db = db;
             _jwtSecret = config["Jwt:Secret"] ?? throw new Exception("JWT Secret manquant");
-            _adminEmails = config.GetSection("Admins").Get<List<string>>() ?? new List<string>();
+            _adminEmail = config["AdminEmail"] ?? throw new Exception("AdminEmail manquant");
         }
 
         // ------------------------- 
@@ -35,7 +35,7 @@ namespace TodoApi.Data
                 Email = email,
                 Name = name,
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(password),
-                Role = _adminEmails.Contains(email.ToLower()) ? Helpers.UserRole.Admin : Helpers.UserRole.User,
+                Role = email.ToLower() == _adminEmail.ToLower() ? Helpers.UserRole.Admin : Helpers.UserRole.User,
                 CreatedAt = DateTime.UtcNow,
                 LastLoginAt = DateTime.UtcNow,
                 IsActive = true
@@ -129,5 +129,66 @@ namespace TodoApi.Data
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
         }
+
+        // -------------------------
+        // RECUPERER TOUS LES UTILISATEURS (ADMIN SEULEMENT)
+        // -------------------------
+        public async Task<PagedResult<User>> GetAllUsersAsync(
+    string email,
+    string? search = null,
+    string? role = null,        
+    string? sortBy = "Name",
+    bool descending = false,
+    int page = 1,
+    int pageSize = 5)
+        {
+            var currentUser = await _db.Users.FirstOrDefaultAsync(u => u.Email == email);
+            if (currentUser == null)
+                throw new Exception("Utilisateur non trouvé");
+
+            if (currentUser.Role != Helpers.UserRole.Admin)
+                throw new UnauthorizedAccessException("Accès refusé : seul un administrateur peut récupérer tous les utilisateurs");
+
+            // Récupérer tous les utilisateurs
+            var query = _db.User.AsQueryable();
+
+            // Recherche
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                search = search.ToLower();
+                query = query.Where(u => u.Name.ToLower().Contains(search) || u.Email.ToLower().Contains(search));
+            }
+
+            // Filtre par rôle
+            if (!string.IsNullOrWhiteSpace(role))
+            {
+                role = role.ToLower();
+                query = query.Where(u => u.Role.ToLower() == role);
+            }
+
+            // Tri
+            query = sortBy?.ToLower() switch
+            {
+                "name" => descending ? query.OrderByDescending(u => u.Name) : query.OrderBy(u => u.Name),
+                "email" => descending ? query.OrderByDescending(u => u.Email) : query.OrderBy(u => u.Email),
+                "role" => descending ? query.OrderByDescending(u => u.Role) : query.OrderBy(u => u.Role),
+                _ => query.OrderBy(u => u.Name)
+            };
+
+            // Pagination
+            var totalItems = await query.CountAsync();
+            var users = await query
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return new PagedResult<User>
+            {
+                Items = users,
+                Total = totalItems
+            };
+        }
+
+
     }
 }

@@ -4,6 +4,8 @@ import { PagedResult } from '../../models/PagedResult';
 import { TodoQuery } from '../../models/TodoQuery';
 import { ToDoList } from '../../core/services/to-do-list/to-do-list';
 import { Router } from '@angular/router';
+import { ToastService } from '../../core/services/Toast/toast.service';
+import { ConfirmService } from '../../core/services/Confirm/confirm.service';
 
 @Component({
   selector: 'app-todo-list',
@@ -16,7 +18,8 @@ export class TodoList implements OnInit {
   loading: boolean = false;
   errorMessage: string = '';
   filterExpanded: boolean = false;
-
+  priorities: string[] = [];
+  categories: string[] = [];
   // Pagination + filtres
   query: TodoQuery = {
     priority: '',
@@ -32,57 +35,74 @@ export class TodoList implements OnInit {
   totalItems: number = 0;
   totalPages: number = 0;
 
-  constructor(private todoService: ToDoList, public router: Router) { }
+  constructor(private todoService: ToDoList, private toast: ToastService, private confirm: ConfirmService , public router: Router) { }
 
   ngOnInit(): void {
+    this.todoService.getMetadata().subscribe(data => {
+      this.priorities = data.priorities;
+      this.categories = data.categories;
+    });
     this.loadTodos();
   }
 
-  // Bascule affichage filtres
   toggleFilterExpansion(): void {
     this.filterExpanded = !this.filterExpanded;
   }
 
-  // Charger les todos
   loadTodos() {
     this.loading = true;
     this.todoService.getFiltred(this.query).subscribe({
-      next: (res: PagedResult) => {
+      next: (res: PagedResult<TodoItem>) => {
         this.todos = res.items;
         this.totalItems = res.total;
         this.totalPages = Math.ceil(this.totalItems / this.query.pageSize!);
         this.loading = false;
       },
       error: err => {
-        this.errorMessage = 'Erreur lors du chargement des todos';
-        console.error(err);
+        this.toast.show('Erreur lors du chargement des todos', 'error');
         this.loading = false;
       }
     });
   }
 
-  // Marquer comme complet/incomplet
   toggleComplete(todo: TodoItem) {
     this.todoService.toggleComplete(todo.id).subscribe({
       next: updated => {
-        todo.isComplete = updated.isComplete;
-        todo.isOverdue = updated.isOverdue;
-        todo.canToggle = updated.canToggle;
-        todo.lastModifiedAt = updated.lastModifiedAt;
+        Object.assign(todo, updated);
+        this.toast.show(
+          `Tâche "${todo.title}" mise à jour (${todo.isComplete ? 'complète' : 'incomplète'})`,
+          'success'
+        );
       },
-      error: err => console.error('Erreur lors du toggle', err)
+      error: err => {
+        this.toast.show('Erreur lors du changement de statut', 'error');
+        console.error(err);
+      }
     });
   }
 
-  // Supprimer
   deleteTodo(todo: TodoItem) {
-    this.todoService.delete(todo.id).subscribe({
-      next: () => this.loadTodos(),
-      error: err => console.error('Erreur lors de la suppression', err)
+    this.confirm.confirm({
+      title: 'Suppression',
+      message: `Voulez-vous vraiment supprimer "${todo.title}" ?`,
+      confirmText: 'Oui, supprimer',
+      cancelText: 'Annuler'
+    }).then(result => {
+      if (result) {
+        this.todoService.delete(todo.id).subscribe({
+          next: () => {
+            this.loadTodos();
+            this.toast.show(`Tâche "${todo.title}" supprimée`, 'success');
+          },
+          error: err => {
+            this.toast.show('Erreur lors de la suppression', 'error');
+            console.error(err);
+          }
+        });
+      }
     });
   }
 
-  // Appliquer filtre
   applyFilter() {
     this.query.page = 1;
     this.loadTodos();
@@ -100,9 +120,9 @@ export class TodoList implements OnInit {
       pageSize: 3
     };
     this.loadTodos();
+    this.toast.show('Filtres réinitialisés', 'success');
   }
 
-  // Pagination
   changePage(offset: number) {
     if (!this.query.page || !this.totalPages) return;
     const newPage = this.query.page + offset;
@@ -112,7 +132,6 @@ export class TodoList implements OnInit {
     this.loadTodos();
   }
 
-  // TrackBy
   trackByTodoId(index: number, todo: TodoItem): number {
     return todo.id;
   }

@@ -33,18 +33,21 @@ export class SignUp implements AfterViewInit {
     }, { validator: this.passwordMatchValidator });
   }
 
+  // Google Sign-In
   ngAfterViewInit(): void {
-    // Google Sign-In
     this.googleAuth.initGoogleButton(
       (res: AuthResponse) => {
         this.ngZone.run(() => {
           this.authService.setToken(res.token!);
           this.user = res;
 
-          // Toast succès
-          this.toast.show(`Bienvenue ${res.name}`, 'success', 3000);
+          // Toast Google connexion
+          this.toast.show(
+            `Inscription réussie via Google. Bienvenue ${res.name} !`,
+            'success',
+            3000
+          );
 
-          // Navigation après 3 secondes
           setTimeout(() => {
             this.router.navigate(['/todo']);
           }, 3000);
@@ -52,7 +55,11 @@ export class SignUp implements AfterViewInit {
       },
       (err) => {
         this.ngZone.run(() => {
-          this.toast.show('Erreur Google Sign-In', 'error', 3000);
+          this.toast.show(
+            'Erreur Google Sign-In. Veuillez réessayer.',
+            'error',
+            3000
+          );
         });
       }
     );
@@ -66,7 +73,14 @@ export class SignUp implements AfterViewInit {
 
   // Inscription classique
   onSubmit() {
-    if (this.signUpForm.invalid) return;
+    if (this.signUpForm.invalid) {
+      this.toast.show(
+        'Veuillez remplir correctement tous les champs.',
+        'warning',
+        3000
+      );
+      return;
+    }
 
     const request: AuthRequest = {
       name: this.signUpForm.value.name,
@@ -79,10 +93,14 @@ export class SignUp implements AfterViewInit {
         if (response?.token) {
           this.authService.setToken(response.token);
 
-          // Toast succès inscription
-          this.toast.show('Inscription réussie', 'success', 3000);
+          //  Toast succès
+          this.toast.show(
+            `Bienvenue ${request.name} ! Votre compte a été créé avec succès.`,
+            'success',
+            3000
+          );
 
-          // Naviguer vers login après 3 secondes
+          // Redirection vers login après 3 secondes
           setTimeout(() => {
             this.router.navigate(['/todo/login']);
           }, 3000);
@@ -90,7 +108,9 @@ export class SignUp implements AfterViewInit {
       },
       error: (err) => {
         console.error(err);
-        this.errorMessage = err.error?.message || 'Une erreur est survenue';
+        this.errorMessage = err.error?.message || 'Une erreur est survenue lors de l’inscription.';
+
+        // Toast erreur
         this.toast.show(this.errorMessage, 'error', 3000);
       }
     });
@@ -98,6 +118,7 @@ export class SignUp implements AfterViewInit {
 
   // Aller à la page de connexion
   goToSignIn() {
+    this.toast.show('Déjà inscrit ? Connectez-vous !', 'info', 2000);
     this.router.navigate(['/todo/login']);
   }
 }

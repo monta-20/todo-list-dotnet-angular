@@ -107,5 +107,45 @@ public static class AuthEndpoints
                 Role = user.Role.ToString()
             });
         }).RequireAuthorization("UserOrAdminPolicy");
+
+        // -------------------------
+        // GET ALL USERS (ADMIN ONLY)
+        // -------------------------
+        group.MapGet("/users", async (AuthService auth, HttpContext context,
+                              string? search, string? role, string? sortBy, bool descending = false,
+                              int page = 1, int pageSize = 5) =>
+        {
+            var email = context.User?.FindFirst(c => c.Type == ClaimTypes.Email)?.Value;
+            if (email == null)
+                return Results.Unauthorized();
+
+            try
+            {
+                // Appel au service avec pagination, tri, recherche et filtre par rôle
+                var pagedResult = await auth.GetAllUsersAsync(email, search, role, sortBy, descending, page, pageSize);
+
+                // Mapper pour exposer uniquement les informations publiques
+                var result = pagedResult.Items.Select(u => new
+                {
+                    u.Id,
+                    u.Name,
+                    u.Email,
+                    Role = u.Role.ToString(),
+                    CreatedAt = u.CreatedAt
+                });
+
+                return Results.Ok(new
+                {
+                    items = result,
+                    total = pagedResult.Total
+                });
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Results.Forbid();
+            }
+        }).RequireAuthorization("AdminPolicy");
+
+
     }
 }

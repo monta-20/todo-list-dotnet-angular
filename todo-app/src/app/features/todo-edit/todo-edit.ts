@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToDoList } from '../../core/services/to-do-list/to-do-list';
 import { TodoItem } from '../../models/TodoItem';
+import { ToastService } from '../../core/services/Toast/toast.service';
 
 @Component({
   selector: 'app-todo-edit',
@@ -10,8 +11,7 @@ import { TodoItem } from '../../models/TodoItem';
   styleUrl: './todo-edit.css'
 })
 export class TodoEdit {
-
-  todo!: TodoItem; // sera chargé via API
+  todo!: TodoItem;
   priorities: string[] = [];
   categories: string[] = [];
   today: string = '';
@@ -20,7 +20,8 @@ export class TodoEdit {
   constructor(
     private route: ActivatedRoute,
     private todoService: ToDoList,
-    private router: Router
+    private router: Router,
+    private toast: ToastService 
   ) { }
 
   ngOnInit(): void {
@@ -35,17 +36,21 @@ export class TodoEdit {
     // Charger le todo à modifier
     this.todoService.getById(id).subscribe({
       next: (data) => {
+        if (data.dueDate) {
+          const d = new Date(data.dueDate);
+          const year = d.getFullYear();
+          const month = String(d.getMonth() + 1).padStart(2, '0');
+          const day = String(d.getDate()).padStart(2, '0');
+          data.dueDate = `${year}-${month}-${day}`;
+        }
         this.todo = data;
         this.loading = false;
       },
       error: (err) => {
-        console.error('❌ Erreur de chargement', err);
+        this.toast.show('Impossible de charger la tâche.', 'error', 2000);
         this.router.navigate(['/todo']);
       }
     });
-
-    // Min date pour dueDate
-    this.today = new Date().toISOString().split('T')[0];
   }
 
   onSubmit() {
@@ -53,11 +58,22 @@ export class TodoEdit {
 
     this.todoService.update(this.todo.id, this.todo).subscribe({
       next: () => {
-        alert('✅ Tâche mise à jour avec succès !');
-        this.router.navigate(['/todo']);
+        this.toast.show(
+          `Tâche "${this.todo.title}" mise à jour avec succès !`,
+          'success',
+          3000
+        );
+
+        setTimeout(() => {
+          this.router.navigate(['/todo']);
+        }, 1500);
       },
       error: (err) => {
-        console.error('❌ Erreur lors de la mise à jour', err);
+        this.toast.show(
+          err.error?.message || 'Erreur lors de la mise à jour.',
+          'error',
+          2000
+        );
       }
     });
   }
@@ -66,3 +82,4 @@ export class TodoEdit {
     this.router.navigate(['/todo']);
   }
 }
+

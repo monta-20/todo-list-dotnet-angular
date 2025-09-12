@@ -5,7 +5,8 @@ import { TodoItem } from '../../../models/TodoItem';
 import { Observable } from 'rxjs';
 import { TodoQuery } from '../../../models/TodoQuery';
 import { PagedResult } from '../../../models/PagedResult';
-import { TodoUpdateDto } from '../../../models/TodoUpdateDto';
+import { User } from '../../../models/User';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -27,14 +28,14 @@ export class ToDoList {
   delete(id: number): Observable<void> {
     return this._http.delete<void>(`${this.apiUrl}/${id}`); 
   }
-  getFiltred(query: TodoQuery): Observable<PagedResult> {
+  getFiltred(query: TodoQuery): Observable<PagedResult<TodoItem>> {
     let params = new HttpParams();
     Object.entries(query).forEach(([key, value]) => {
       if (value !== undefined && value !== null) {
         params = params.set(key, value.toString());
       }
     });
-    return this._http.get<PagedResult>(`${this.apiUrl}/filtered`, { params });
+    return this._http.get < PagedResult<TodoItem>>(`${this.apiUrl}/filtered`, { params });
   }
   getMetadata(): Observable<any> {
     return this._http.get(`${this.apiUrl}/metadata`);
@@ -42,4 +43,24 @@ export class ToDoList {
   toggleComplete(id: number): Observable<TodoItem> {
     return this._http.patch<TodoItem>(`${this.apiUrl}/${id}/toggle-complete`, {});
   }
+  // For Admin
+  getUsers(
+    search: string = '',
+    role: string = '',          // ← nouveau paramètre pour le filtre par rôle
+    sortBy: string = 'Name',
+    descending: boolean = false,
+    page: number = 1,
+    pageSize: number = 3
+  ): Observable<PagedResult<User>> {
+    let params = new HttpParams()
+      .set('search', search)
+      .set('role', role)         // ← ajouter ici
+      .set('sortBy', sortBy)
+      .set('descending', descending)
+      .set('page', page)
+      .set('pageSize', pageSize);
+
+    return this._http.get<PagedResult<User>>(`${this.apiUrl}/auth/users`, { params });
+  }
+
 }

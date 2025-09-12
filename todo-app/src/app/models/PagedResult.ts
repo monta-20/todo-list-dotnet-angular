@@ -1,6 +1,6 @@
 import { TodoItem } from "./TodoItem";
 
-export interface PagedResult {
-  items: TodoItem[];
+export interface PagedResult<T> {
+  items: T[];
   total: number;
 }
