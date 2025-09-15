@@ -10,3 +10,15 @@ body {
   background-color: #f5f7f9;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
+
+/* styles.css */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #003D59, #1cc88a);
+  background-attachment: fixed; /* Pour que le dégradé reste fixe lors du scroll */
+  background-size: cover;
+  color: #fff; /* Couleur du texte par défaut */
+}

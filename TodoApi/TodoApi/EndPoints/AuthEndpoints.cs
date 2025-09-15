@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using TodoApi.Data;
+using TodoApi.Helpers;
 using TodoApi.Models;
 
 public static class AuthEndpoints
@@ -146,6 +147,37 @@ public static class AuthEndpoints
             }
         }).RequireAuthorization("AdminPolicy");
 
+        // -------------------------
+        // Bloquer un utilisateur (ADMIN ONLY)
+        // -------------------------
+        group.MapPatch("/users/{id}/block", async (long id, AuthService auth, HttpContext context) =>
+        {
+            var email = context.User?.FindFirst(c => c.Type == ClaimTypes.Email)?.Value;
+            if (email == null) return Results.Unauthorized();
 
+            var currentUser = await auth.GetUserByEmailAsync(email);
+            if (currentUser.Role != UserRole.Admin) return Results.Forbid();
+
+            var success = await auth.BlockUserAsync(id, currentUser);
+            if (!success) return Results.BadRequest("Impossible de bloquer cet utilisateur");
+
+            return Results.Ok(new { message = "Utilisateur bloqué avec succès" });
+        }).RequireAuthorization("AdminPolicy");
+
+        // -------------------------
+        // Débloquer un utilisateur (ADMIN ONLY)
+        // -------------------------
+        group.MapPatch("/users/{id}/unblock", async (long id, AuthService auth, HttpContext context) =>
+        {
+            var email = context.User?.FindFirst(c => c.Type == ClaimTypes.Email)?.Value;
+            if (email == null) return Results.Unauthorized();
+
+            var currentUser = await auth.GetUserByEmailAsync(email);
+            if (currentUser.Role != UserRole.Admin) return Results.Forbid();
+            var success = await auth.UnblockUserAsync(id, currentUser);
+            if (!success) return Results.BadRequest("Impossible de débloquer cet utilisateur");
+      
+            return Results.Ok(new { message = "Utilisateur débloqué avec succès" });
+        }).RequireAuthorization("AdminPolicy");
     }
 }

@@ -14,9 +14,9 @@
 
       <!-- Partie Sign Up -->
       <div class="col-12 col-md-6 col-lg-5">
-        <div class="card shadow rounded-4 border-0 mx-auto">
-          <div class="card-body p-4">
-            <h3 class="mb-3 text-center">Créer un compte</h3>
+        <div class="card shadow-lg rounded-4 border-0 mx-auto">
+          <div class="card-body p-5">
+            <h3 class="mb-4 text-center fw-bold">Créer un compte</h3>
             <p class="mb-4 text-center">
               Déjà inscrit ?
               <button class="btn btn-outline-secondary btn-sm ms-2" (click)="goToSignIn()">
@@ -24,50 +24,56 @@
               </button>
             </p>
 
-            <form [formGroup]="signUpForm" (ngSubmit)="onSubmit()">
+            <form [formGroup]="signUpForm" (ngSubmit)="onSubmit()" novalidate>
+
               <!-- Nom -->
-              <div class="form-floating mb-3">
-                <input type="text" id="name" class="form-control" formControlName="name" placeholder="Votre nom" required>
+              <div class="form-floating mb-3 position-relative">
+                <input type="text" id="name" class="form-control"
+                       formControlName="name" placeholder="Nom complet"
+                       [class.is-invalid]="signUpForm.get('name')?.invalid && signUpForm.get('name')?.touched">
                 <label for="name">Nom complet</label>
-                <div class="text-danger small" *ngIf="signUpForm.get('name')?.invalid && signUpForm.get('name')?.touched">
+                <div class="invalid-feedback">
                   Le nom est requis
                 </div>
               </div>
 
               <!-- Email -->
-              <div class="form-floating mb-3">
-                <input type="email" id="email" class="form-control" formControlName="email" placeholder="name@example.com" required>
+              <div class="form-floating mb-3 position-relative">
+                <input type="email" id="email" class="form-control"
+                       formControlName="email" placeholder="name@example.com"
+                       [class.is-invalid]="signUpForm.get('email')?.invalid && signUpForm.get('email')?.touched">
                 <label for="email">Email</label>
-                <div class="text-danger small" *ngIf="signUpForm.get('email')?.invalid && signUpForm.get('email')?.touched">
+                <div class="invalid-feedback">
                   Email invalide
                 </div>
               </div>
 
               <!-- Mot de passe -->
-              <div class="form-floating mb-3">
-                <input type="password" id="password" class="form-control" formControlName="password" placeholder="Mot de passe" required>
+              <div class="form-floating mb-3 position-relative">
+                <input type="password" id="password" class="form-control"
+                       formControlName="password" placeholder="Mot de passe"
+                       [class.is-invalid]="signUpForm.get('password')?.invalid && signUpForm.get('password')?.touched">
                 <label for="password">Mot de passe</label>
-                <div class="text-danger small" *ngIf="signUpForm.get('password')?.errors?.['minlength']">
+                <div class="invalid-feedback" *ngIf="signUpForm.get('password')?.errors?.['minlength']">
                   Le mot de passe doit contenir au moins 6 caractères
                 </div>
               </div>
 
               <!-- Confirmation mot de passe -->
-              <div class="form-floating mb-3">
-                <input type="password" id="confirmPassword" class="form-control" formControlName="confirmPassword" placeholder="Confirmer le mot de passe" required>
+              <div class="form-floating mb-4 position-relative">
+                <input type="password" id="confirmPassword" class="form-control"
+                       formControlName="confirmPassword" placeholder="Confirmer le mot de passe"
+                       [class.is-invalid]="signUpForm.errors?.['mismatch'] && signUpForm.get('confirmPassword')?.touched">
                 <label for="confirmPassword">Confirmer le mot de passe</label>
-                <div class="text-danger small" *ngIf="signUpForm.errors?.['mismatch']">
+                <div class="invalid-feedback">
                   Les mots de passe ne correspondent pas
                 </div>
               </div>
 
-              <button type="submit" class="btn btn-custom btn-lg w-auto mb-3 px-4 d-block mx-auto"
-                      [disabled]="signUpForm.invalid">
-                S'inscrire
-              </button>
+              <button type="submit" class="btn btn-custom btn-lg w-auto mb-3 px-4 d-block mx-auto" [disabled]="signUpForm.invalid"> Register </button>
             </form>
 
-            <p class="text-center my-3">Ou s’inscrire avec</p>
+            <p class="text-center my-3 text-muted">Ou s’inscrire avec</p>
 
             <!-- Google Sign-Up -->
             <div id="google-signin-button" class="d-flex justify-content-center mb-3"></div>

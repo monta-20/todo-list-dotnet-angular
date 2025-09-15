@@ -15,7 +15,7 @@ const routes: Routes = [
   { path: 'todo/edit/:id', component: TodoEdit, canActivate: [authGuard] },
   { path: 'todo/login', component: SignIn, canActivate: [noAuthGuard] },
   { path: 'todo/signup', component: SignUp, canActivate: [noAuthGuard] },
-  { path: 'todo/users', component: UserList, canActivate: [authGuard] },
+  { path: 'todo/users', component: UserList, canActivate: [authGuard], data: { role: 'Admin' } },
   { path: '**', redirectTo: 'todo/login' }
 ];
 

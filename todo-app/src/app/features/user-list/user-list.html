@@ -6,7 +6,7 @@
     <div class="search-filter-container">
       <div class="search-box">
         <i class="fas fa-search search-icon"></i>
-        <input type="text" [(ngModel)]="search" placeholder="Rechercher par nom ou email..."
+        <input type="text" [(ngModel)]="search" (ngModelChange)="applyFilters()" placeholder="Rechercher par nom ou email..."
                class="modern-search-input" (keyup.enter)="onSearch()" />
         <button class="modern-search-btn" (click)="onSearch()">Rechercher</button>
       </div>
@@ -74,11 +74,12 @@
             </td>
             <td class="date-cell">{{ user.createdAt | date:'dd/MM/yyyy' }}</td>
             <td class="action-cell">
-              <button class="action-btn view-btn" title="Voir détails">
-                <i class="fas fa-eye"></i>
-              </button>
-              <button class="action-btn edit-btn" title="Modifier">
-                <i class="fas fa-edit"></i>
+              <button (click)="toggleBlock(user)"
+                      class="btn px-4 py-2 rounded-pill shadow-sm d-flex align-items-center gap-2"
+                      [ngClass]="user.isBlocked ? 'btn-success' : 'btn-warning'">
+
+                <i class="fas" [ngClass]="user.isBlocked ? 'fa-unlock' : 'fa-ban'"></i>
+                <span>{{ user.isBlocked ? 'Débloquer' : 'Bloquer' }}</span>
               </button>
             </td>
           </tr>
@@ -114,8 +115,12 @@
               class="page-number">
           {{ p }}
         </span>
-        <span *ngIf="totalPages > 5 && page < totalPages - 2" class="page-ellipsis">...</span>
-        <span *ngIf="totalPages > 1 && page <= totalPages - 2"
+
+        <!-- n'afficher "..." que si le dernier numéro visible est inférieur au total -->
+        <span *ngIf="totalPages > 5 && getPageNumbers()[getPageNumbers().length - 1] < totalPages - 1" class="page-ellipsis">...</span>
+
+        <!-- n'afficher le dernier numéro que s'il n'est pas déjà affiché -->
+        <span *ngIf="totalPages > 1 && getPageNumbers()[getPageNumbers().length - 1] < totalPages"
               (click)="goToPage(totalPages)"
               class="page-number">
           {{ totalPages }}
@@ -126,7 +131,9 @@
         <i class="fas fa-chevron-right"></i>
       </button>
     </div>
-
-    
   </div>
+
 </div>
+
+<app-toast-container-component></app-toast-container-component>
+<app-confirm-container-component></app-confirm-container-component>

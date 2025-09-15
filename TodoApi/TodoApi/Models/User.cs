@@ -14,6 +14,8 @@ namespace TodoApi.Models
         public bool IsActive { get; set; } = true;
         public UserRole Role { get; set; } = UserRole.User;
 
+        public bool IsBlocked { get; set; } = false;
+
         // Relationships with TodoItem Many-to-One
         public ICollection<TodoItem> TodoItems { get; set; } = new List<TodoItem>(); 
 

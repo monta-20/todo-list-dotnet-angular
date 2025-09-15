@@ -1,9 +1,26 @@
 <div class="todo-card-container">
   <!-- Header avec bouton Nouvelle tâche -->
   <div class="card-header d-flex justify-content-between align-items-center mb-4">
-    <div>
-      <h1><i class="fas fa-clipboard-list"></i> Gestionnaire de Tâches</h1>
-      <p>Organisez et suivez vos tâches efficacement</p>
+    <div class="todo-hero">
+      <div class="hero-content">
+        <div class="hero-icon">
+          <i class="fas fa-clipboard-list"></i>
+        </div>
+        <h1 class="hero-title">GoalCheck <span class="highlight">Pro</span></h1> | 
+        <p class="hero-subtitle">Un gestionnaire de tâches moderne qui vous aide à transformer vos idées en actions concrètes</p>
+        <div class="hero-stats">
+          <div class="stat-divider"></div>
+          <div class="stat-item">
+            <div class="stat-number">24/7</div>
+            <div class="stat-label">Disponible</div>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat-item">
+            <div class="stat-number">∞</div>
+            <div class="stat-label">Tâches</div>
+          </div>
+        </div>
+      </div>
     </div>
     <button class="btn-primary btn-create" (click)="router.navigate(['/todo/create'])">
       <i class="fas fa-plus"></i>

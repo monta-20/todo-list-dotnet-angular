@@ -5,6 +5,7 @@ import { ConfirmData } from '../../../models/ConfirmData';
 @Injectable({
   providedIn: 'root'
 })
+
 export class ConfirmService {
   private _confirmState = new BehaviorSubject<ConfirmData | null>(null);
   confirmState$ = this._confirmState.asObservable();

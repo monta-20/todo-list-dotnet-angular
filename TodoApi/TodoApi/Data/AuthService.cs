@@ -28,7 +28,12 @@ namespace TodoApi.Data
         {
             var existingUser = await _db.Users.FirstOrDefaultAsync(u => u.Email == email);
             if (existingUser != null)
+            {
+                if (existingUser.IsBlocked)
+                    throw new Exception("Votre compte est bloqué. Contactez l’administrateur.");
                 throw new Exception("Utilisateur déjà existant");
+            }
+               
 
             var user = new User
             {
@@ -55,6 +60,9 @@ namespace TodoApi.Data
             var user = await _db.Users.FirstOrDefaultAsync(u => u.Email == email);
             if (user == null)
                 throw new Exception("Utilisateur non trouvé");
+
+            if (user.IsBlocked)
+                throw new Exception("Votre compte est bloqué. Contactez l’administrateur.");
 
             if (!BCrypt.Net.BCrypt.Verify(password, user.PasswordHash))
                 throw new Exception("Mot de passe incorrect");
@@ -87,6 +95,9 @@ namespace TodoApi.Data
             }
             else
             {
+                if (user.IsBlocked)
+                    throw new Exception("Votre compte est bloqué. Contactez l’administrateur.");
+
                 user.GoogleToken = googleToken;
                 user.LastLoginAt = DateTime.UtcNow;
             }
@@ -133,14 +144,7 @@ namespace TodoApi.Data
         // -------------------------
         // RECUPERER TOUS LES UTILISATEURS (ADMIN SEULEMENT)
         // -------------------------
-        public async Task<PagedResult<User>> GetAllUsersAsync(
-    string email,
-    string? search = null,
-    string? role = null,        
-    string? sortBy = "Name",
-    bool descending = false,
-    int page = 1,
-    int pageSize = 5)
+        public async Task<PagedResult<User>> GetAllUsersAsync(string email,string? search = null,string? role = null,        string? sortBy = "Name",bool descending = false,int page = 1,int pageSize = 5)
         {
             var currentUser = await _db.Users.FirstOrDefaultAsync(u => u.Email == email);
             if (currentUser == null)
@@ -150,7 +154,7 @@ namespace TodoApi.Data
                 throw new UnauthorizedAccessException("Accès refusé : seul un administrateur peut récupérer tous les utilisateurs");
 
             // Récupérer tous les utilisateurs
-            var query = _db.User.AsQueryable();
+            var query = _db.Users.AsQueryable();
 
             // Recherche
             if (!string.IsNullOrWhiteSpace(search))
@@ -163,7 +167,7 @@ namespace TodoApi.Data
             if (!string.IsNullOrWhiteSpace(role))
             {
                 role = role.ToLower();
-                query = query.Where(u => u.Role.ToLower() == role);
+                query = query.Where(u => u.Role.ToString().ToLower() == role);
             }
 
             // Tri
@@ -171,7 +175,7 @@ namespace TodoApi.Data
             {
                 "name" => descending ? query.OrderByDescending(u => u.Name) : query.OrderBy(u => u.Name),
                 "email" => descending ? query.OrderByDescending(u => u.Email) : query.OrderBy(u => u.Email),
-                "role" => descending ? query.OrderByDescending(u => u.Role) : query.OrderBy(u => u.Role),
+                "role" => descending ? query.OrderByDescending(u => u.Role.ToString()) : query.OrderBy(u => u.Role.ToString()),
                 _ => query.OrderBy(u => u.Name)
             };
 
@@ -189,6 +193,52 @@ namespace TodoApi.Data
             };
         }
 
+        // -------------------------
+        // RECUPERER UN UTILISATEUR PAR EMAIL
+        // -------------------------
+        public async Task<User?> GetUserByEmailAsync(string email)
+        {
+            return await _db.Users.FirstOrDefaultAsync(u => u.Email == email);
+        }
 
+        // -------------------------
+        // BLOQUER UN UTILISATEUR (ADMIN SEULEMENT)
+        // -------------------------
+        public async Task<bool> BlockUserAsync(long id, User admin)
+        {
+            if (admin == null || admin.Role != Helpers.UserRole.Admin)
+                throw new UnauthorizedAccessException("Seul un administrateur peut bloquer un utilisateur.");
+
+            var user = await _db.Users.FindAsync(id);
+            if (user == null)
+                return false;
+
+            if (user.Role == Helpers.UserRole.Admin)
+                return false; 
+
+            user.IsBlocked = true;
+            await _db.SaveChangesAsync();
+            return true;
+        }
+
+        // -------------------------
+        // DÉBLOQUER UN UTILISATEUR (ADMIN SEULEMENT)
+        // -------------------------
+        public async Task<bool> UnblockUserAsync(long id, User admin)
+        {
+            if (admin == null || admin.Role != Helpers.UserRole.Admin)
+                throw new UnauthorizedAccessException("Seul un administrateur peut débloquer un utilisateur.");
+
+            var user = await _db.Users.FindAsync(id);
+            if (user == null)
+                return false;
+
+            if (user.Role == Helpers.UserRole.Admin)
+                return false; 
+
+            user.IsBlocked = false;
+            await _db.SaveChangesAsync();
+            return true;
+        }
     }
 }

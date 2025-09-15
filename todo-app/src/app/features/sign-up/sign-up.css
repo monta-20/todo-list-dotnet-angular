@@ -25,13 +25,15 @@
 
 /* Boutons */
 .btn-primary {
-  background-color: #2575fc;
-  border-color: #2575fc;
+  background: #ffd166;
+  color: #003D59; 
 }
 
   .btn-primary:hover {
-    background-color: #1a5dcc;
-    transform: translateY(-1px);
+    background: #003D59; 
+    color: #fff; 
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
   }
 
 .btn-outline-secondary {
@@ -52,16 +54,26 @@
 
 
 .btn-custom {
-  background-color: #003D59;
-  border-color: #003D59;
-  color: #fff;
-  font-size: 1rem;
+  background: #ffd166; 
+  color: #003D59; 
+  font-weight: 600;
+  padding: 0.4rem 0.9rem; 
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+  width:100%;
+  border: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
 }
 
   .btn-custom:hover {
-    background-color: #00293d;
-    border-color: #00293d;
-    color: #fff;
+    background: #003D59; 
+    color: #fff; 
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
   }
 
 .forgot-link {

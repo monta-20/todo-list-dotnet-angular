@@ -1,12 +1,14 @@
 .users-modern-container {
   padding: 2rem;
-  background-color: #f8f9fa;
   min-height: 100vh;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #003D59, #1cc88a);
+  color: #fff;
 }
 
 .modern-header {
-  background: white;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
   border-radius: 12px;
   padding: 1.5rem;
   margin-bottom: 1.5rem;
@@ -30,12 +32,13 @@
 .search-box {
   display: flex;
   align-items: center;
-  background: white;
+  background: rgba(255,255,255,0.15);
+  backdrop-filter: blur(10px);
   border: 1px solid #e2e8f0;
   border-radius: 8px;
   overflow: hidden;
   flex: 1;
-  min-width: 300px;
+  min-width: 200px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
@@ -51,10 +54,11 @@
   outline: none;
   font-size: 0.9rem;
   color: #003D59;
+  background: transparent;
 }
 
   .modern-search-input::placeholder {
-    color: #a0aec0;
+    color: rgba(255,255,255,0.7);
   }
 
 .modern-search-btn {
@@ -75,27 +79,37 @@
 
 .filter-section {
   display: flex;
-  gap: 0.75rem;
+  align-items: center;
+  gap: 10px;
 }
 
 .modern-filter-select {
-  padding: 0.75rem;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  background: white;
-  color: #003D59;
+  padding: 6px 12px;
   font-size: 0.9rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #f8f9fa;
+  color: #333;
   cursor: pointer;
+  transition: all 0.2s;
+  min-width: 180px;
 }
+
+  .modern-filter-select:hover {
+    border-color: #4361ee;
+    box-shadow: 0 2px 6px rgba(67, 97, 238, 0.3);
+  }
 
   .modern-filter-select:focus {
     outline: none;
-    border-color: #1cc88a;
+    border-color: #4361ee;
+    box-shadow: 0 0 0 2px rgba(67, 97, 238, 0.2);
   }
 
+
 .modern-table-container {
-  background: white;
+  background: rgba(255,255,255,0.15);
+  backdrop-filter: blur(10px);
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
@@ -108,7 +122,7 @@
 }
 
   .modern-table thead {
-    background: linear-gradient(135deg, #003D59, #1cc88a);
+    background: rgba(255,255,255,0.25);
   }
 
   .modern-table th {
@@ -283,7 +297,8 @@
   flex-direction: column; /* empile verticalement info et contrôles */
   align-items: center; /* centre horizontalement tout le contenu */
   gap: 0.5rem;
-  background: white;
+  background: rgba(255,255,255,0.15);
+  backdrop-filter: blur(10px);
   padding: 1rem 1.5rem;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
@@ -379,7 +394,8 @@
   }
 
   .search-box {
-    min-width: auto;
+    min-width: 100px;
+    width:50%;
   }
 
   .modern-pagination {

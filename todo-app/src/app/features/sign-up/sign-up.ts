@@ -32,7 +32,6 @@ export class SignUp implements AfterViewInit {
       confirmPassword: ['', [Validators.required]]
     }, { validator: this.passwordMatchValidator });
   }
-
   // Google Sign-In
   ngAfterViewInit(): void {
     this.googleAuth.initGoogleButton(
@@ -55,22 +54,17 @@ export class SignUp implements AfterViewInit {
       },
       (err) => {
         this.ngZone.run(() => {
-          this.toast.show(
-            'Erreur Google Sign-In. Veuillez réessayer.',
-            'error',
-            3000
-          );
+          const msg = err.error?.message || 'Erreur Google Login';
+          this.toast.show(msg, 'error', 3000);
         });
       }
     );
   }
-
   // Vérifie que les mots de passe correspondent
   passwordMatchValidator(form: FormGroup) {
     return form.get('password')!.value === form.get('confirmPassword')!.value
       ? null : { mismatch: true };
   }
-
   // Inscription classique
   onSubmit() {
     if (this.signUpForm.invalid) {
@@ -107,15 +101,12 @@ export class SignUp implements AfterViewInit {
         }
       },
       error: (err) => {
-        console.error(err);
         this.errorMessage = err.error?.message || 'Une erreur est survenue lors de l’inscription.';
-
         // Toast erreur
         this.toast.show(this.errorMessage, 'error', 3000);
       }
     });
   }
-
   // Aller à la page de connexion
   goToSignIn() {
     this.toast.show('Déjà inscrit ? Connectez-vous !', 'info', 2000);

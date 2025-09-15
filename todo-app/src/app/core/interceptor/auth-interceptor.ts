@@ -26,12 +26,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
         authService.clearToken();
         router.navigate(['/todo/login']);
       } else if (error.status === 403) {
-        alert('Accès refusé');
-      } else if (error.status === 400) {
-        alert(error.error?.message || 'Requête invalide');
-      } else {
-        console.error(error);
-        alert('Erreur serveur');
+        alert('Accès refusé'); 
       }
       return throwError(() => error);
     })

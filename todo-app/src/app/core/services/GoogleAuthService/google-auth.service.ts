@@ -52,18 +52,14 @@ export class GoogleAuthService {
       this.authService.googleLogin(request).subscribe({
         next: (res) => {
           this.authService.setToken(res.token!);
-          this.toast.show(`Bienvenue ${res.name}`, 'success', 3000);
           callback(res);
         },
         error: (err) => {
-          const msg = err.error?.message || 'Erreur Google Login';
-          this.toast.show(msg, 'error', 3000);
           if (errorCallback) errorCallback(err);
         }
       });
     } catch (error) {
-      console.error('Erreur lors du décodage du token Google:', error);
-      this.toast.show('Impossible de récupérer les informations Google.', 'error', 3000);
+        // handle error
     }
   }
 }

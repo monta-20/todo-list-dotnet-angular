@@ -26,20 +26,15 @@ export class Navbar {
   ) { }
 
   ngOnInit(): void {
-    // Vérifie si l'utilisateur est connecté au chargement
-    this.isLoggedIn = !!this.authService.getToken();
-
-    // mise à jour automatique avec BehaviorSubject
-    this.authService.loggedIn$.subscribe(status => {
-      this.isLoggedIn = status;
-    });
-    this.authService.getCurrentUser().subscribe({
-      next: (user) => {
+    // S'abonner au user courant pour mise à jour automatique
+    this.authService.currentUser$.subscribe(user => {
+      if (user) {
         this.username = user.name;
         this.isAdmin = user.role === 'Admin';
         this.isLoggedIn = true;
-      },
-      error: () => {
+      } else {
+        this.username = '';
+        this.isAdmin = false;
         this.isLoggedIn = false;
       }
     });

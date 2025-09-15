@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { User } from '../../models/User';
 import { ToDoList } from '../../core/services/to-do-list/to-do-list';
+import { ConfirmService } from '../../core/services/Confirm/confirm.service';
+import { AuthService } from '../../core/services/Auth/auth-service';
+import { ToastService } from '../../core/services/Toast/toast.service';
 
 @Component({
   selector: 'app-user-list',
@@ -27,7 +30,7 @@ export class UserList implements OnInit {
   descending: boolean = false;
   loading: boolean = false;
 
-  constructor(private userService: ToDoList) { }
+  constructor(private userService: ToDoList, private confirmService: ConfirmService, private authService: AuthService, private toastService: ToastService) { }
 
   ngOnInit(): void {
     this.loadUsers();
@@ -39,7 +42,7 @@ export class UserList implements OnInit {
       .subscribe({
         next: res => {
           this.users = res.items;
-          this.applyFilters();  // si tu veux filtrer encore côté client
+          this.applyFilters(); 
           this.totalItems = res.total;
           this.totalPages = Math.ceil(this.totalItems / this.pageSize);
           this.loading = false;
@@ -51,6 +54,36 @@ export class UserList implements OnInit {
       });
   }
 
+  async toggleBlock(user: User) {
+   
+    if (user.role === 'Admin' && !user.isBlocked) {
+      this.toastService.warning("Impossible de bloquer un administrateur !");
+      return;
+    }
+
+    const action = user.isBlocked ? 'Débloquer' : 'Bloquer';
+
+    const confirmed = await this.confirmService.confirm({
+      title: `${action} utilisateur`,
+      message: `Voulez-vous vraiment ${action.toLowerCase()} ${user.name}?`
+    });
+
+    if (!confirmed) return;
+
+    if (user.isBlocked) {
+      // Débloquer
+      this.authService.unblockUser(user.id).subscribe(() => {
+        this.toastService.show(`${user.name} est débloqué !`);
+        user.isBlocked = false;  
+      });
+    } else {
+      // Bloquer
+      this.authService.blockUser(user.id).subscribe(() => {
+        this.toastService.show(`${user.name} est bloqué !`);
+        user.isBlocked = true;    
+      });
+    }
+  }
 
   applyFilters() {
     this.filteredUsers = this.users.filter(user => {
@@ -68,8 +101,10 @@ export class UserList implements OnInit {
 
     this.totalItems = this.filteredUsers.length;
     this.totalPages = Math.ceil(this.totalItems / this.pageSize);
-  }
 
+    // Réinitialiser la page actuelle si nécessaire
+    if (this.page > this.totalPages) this.page = this.totalPages || 1;
+  }
 
 
   sort(field: string) {
@@ -124,20 +159,26 @@ export class UserList implements OnInit {
     const pages: number[] = [];
     const maxVisiblePages = 5;
 
-    let startPage = Math.max(1, this.page - Math.floor(maxVisiblePages / 2));
-    let endPage = Math.min(this.totalPages, startPage + maxVisiblePages - 1);
+    if (this.totalPages <= maxVisiblePages) {
+      // Si le total est inférieur ou égal à maxVisiblePages, on affiche tout
+      for (let i = 1; i <= this.totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      let startPage = Math.max(1, this.page - Math.floor(maxVisiblePages / 2));
+      let endPage = startPage + maxVisiblePages - 1;
 
-    // Ajuster si on est près de la fin
-    if (endPage - startPage + 1 < maxVisiblePages) {
-      startPage = Math.max(1, endPage - maxVisiblePages + 1);
-    }
+      if (endPage > this.totalPages) {
+        endPage = this.totalPages;
+        startPage = endPage - maxVisiblePages + 1;
+      }
 
-    for (let i = startPage; i <= endPage; i++) {
-      pages.push(i);
+      for (let i = startPage; i <= endPage; i++) {
+        pages.push(i);
+      }
     }
 
     return pages;
   }
-
 
 }
