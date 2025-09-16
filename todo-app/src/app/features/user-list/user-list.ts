@@ -21,7 +21,7 @@ export class UserList implements OnInit {
 
   // Pagination
   page: number = 1;
-  pageSize: number = 3;
+  pageSize: number = 5;
   totalItems: number = 0;
   totalPages: number = 0;
 
@@ -98,10 +98,6 @@ export class UserList implements OnInit {
     });
 
     this.applySort();
-
-    this.totalItems = this.filteredUsers.length;
-    this.totalPages = Math.ceil(this.totalItems / this.pageSize);
-
     // Réinitialiser la page actuelle si nécessaire
     if (this.page > this.totalPages) this.page = this.totalPages || 1;
   }

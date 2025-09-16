@@ -52,12 +52,23 @@
               <div class="form-floating mb-3 position-relative">
                 <input type="password" id="password" class="form-control"
                        formControlName="password" placeholder="Mot de passe"
+                       (input)="onPasswordInput()"
                        [class.is-invalid]="signUpForm.get('password')?.invalid && signUpForm.get('password')?.touched">
                 <label for="password">Mot de passe</label>
+
                 <div class="invalid-feedback" *ngIf="signUpForm.get('password')?.errors?.['minlength']">
                   Le mot de passe doit contenir au moins 6 caractères
                 </div>
+
+                <!-- Barre de progression -->
+                <div class="password-strength-bar mt-1">
+                  <div class="progress">
+                    <div class="progress-bar" [ngClass]="strengthColor" [style.width.%]="passwordStrength"></div>
+                  </div>
+                  <small class="text-muted">{{ getStrengthLabel() }}</small>
+                </div>
               </div>
+
 
               <!-- Confirmation mot de passe -->
               <div class="form-floating mb-4 position-relative">

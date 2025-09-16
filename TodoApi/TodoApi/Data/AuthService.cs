@@ -5,6 +5,7 @@ using TodoApi.AppContext;
 using Microsoft.EntityFrameworkCore;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
+using TodoApi.Helpers;
 
 namespace TodoApi.Data
 {
@@ -27,13 +28,19 @@ namespace TodoApi.Data
         public async Task<User> SignUpAsync(string email, string password, string name)
         {
             var existingUser = await _db.Users.FirstOrDefaultAsync(u => u.Email == email);
+
             if (existingUser != null)
             {
                 if (existingUser.IsBlocked)
                     throw new Exception("Votre compte est bloqué. Contactez l’administrateur.");
                 throw new Exception("Utilisateur déjà existant");
             }
-               
+
+            int strength = ValidInputs.CalculateStrength(password);
+            if (strength < 86) 
+            {
+                throw new Exception("Le mot de passe est trop faible. Veuillez choisir un mot de passe plus fort.");
+            }
 
             var user = new User
             {

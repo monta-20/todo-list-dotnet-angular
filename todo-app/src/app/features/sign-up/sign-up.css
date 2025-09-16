@@ -95,3 +95,20 @@
   border-color: #003D59;
   box-shadow: 0 0 0 0.25rem rgba(0, 61, 89, 0.25);
 }
+
+
+.password-strength-bar .progress {
+  height: 6px;
+  border-radius: 4px;
+  background-color: #e9ecef;
+}
+
+.password-strength-bar .progress-bar {
+  transition: width 0.3s ease;
+}
+
+.password-strength-bar small {
+  display: block;
+  margin-top: 2px;
+  font-size: 0.75rem;
+}

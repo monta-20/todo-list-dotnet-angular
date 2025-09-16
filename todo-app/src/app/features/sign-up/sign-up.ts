@@ -5,6 +5,7 @@ import { AuthRequest, AuthResponse } from '../../models/Auth';
 import { Router } from '@angular/router';
 import { GoogleAuthService } from '../../core/services/GoogleAuthService/google-auth.service';
 import { ToastService } from '../../core/services/Toast/toast.service';
+import { calculateStrength, getStrengthColor } from '../../utils/password-utils';
 
 @Component({
   selector: 'app-sign-up',
@@ -16,6 +17,9 @@ export class SignUp implements AfterViewInit {
   signUpForm: FormGroup;
   errorMessage: string = '';
   user?: AuthResponse;
+
+  passwordStrength: number = 0;
+  strengthColor: string = 'bg-danger';
 
   constructor(
     private fb: FormBuilder,
@@ -31,6 +35,20 @@ export class SignUp implements AfterViewInit {
       password: ['', [Validators.required, Validators.minLength(6)]],
       confirmPassword: ['', [Validators.required]]
     }, { validator: this.passwordMatchValidator });
+  }
+
+  // À chaque saisie de mot de passe, calcule la force
+  onPasswordInput() {
+    const password = this.signUpForm.get('password')!.value;
+    this.passwordStrength = calculateStrength(password);
+    this.strengthColor = getStrengthColor(this.passwordStrength);
+  }
+
+  getStrengthLabel(): string {
+    if (this.passwordStrength < 60) return 'Faible';
+    if (this.passwordStrength < 86) return 'Moyen';
+    if (this.passwordStrength < 90) return 'Fort';
+    return 'Très Fort';
   }
   // Google Sign-In
   ngAfterViewInit(): void {

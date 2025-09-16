@@ -50,7 +50,7 @@ export class ToDoList {
     sortBy: string = 'Name',
     descending: boolean = false,
     page: number = 1,
-    pageSize: number = 3
+    pageSize: number = 5
   ): Observable<PagedResult<User>> {
     let params = new HttpParams()
       .set('search', search)

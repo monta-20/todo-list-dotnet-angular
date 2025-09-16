@@ -294,14 +294,15 @@
 
 .modern-pagination {
   display: flex;
-  flex-direction: column; /* empile verticalement info et contrôles */
-  align-items: center; /* centre horizontalement tout le contenu */
+  flex-direction: column;
+  align-items: center;
   gap: 0.5rem;
   background: rgba(255,255,255,0.15);
   backdrop-filter: blur(10px);
   padding: 1rem 1.5rem;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border-radius: 16px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+  transition: all 0.3s ease;
 }
 
 .pagination-info {
@@ -315,50 +316,52 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  justify-content: center; /* centre les boutons et les numéros */
+  justify-content: center;
 }
-
 
 .pagination-btn {
   border: 1px solid #e2e8f0;
   background: white;
-  width: 36px;
-  height: 36px;
-  border-radius: 8px;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.25s ease;
   color: #003D59;
+  font-size: 1rem;
+  outline: none;
 }
 
   .pagination-btn:hover:not(:disabled) {
     background: #f7fafc;
-    border-color: #003D59;
-    transform: translateY(-1px);
+    border-color: #1cc88a;
+    box-shadow: 0 2px 8px rgba(28, 200, 138, 0.25);
+    transform: translateY(-2px);
   }
 
   .pagination-btn:disabled {
-    opacity: 0.5;
+    opacity: 0.4;
     cursor: not-allowed;
-    transform: none;
   }
 
 .page-numbers {
   display: flex;
-  gap: 0.25rem;
+  gap: 0.3rem;
 }
 
-.page-number {
-  width: 36px;
-  height: 36px;
+.page-number,
+.page-ellipsis {
+  width: 38px;
+  height: 38px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 8px;
+  border-radius: 10px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.25s ease;
   font-size: 0.9rem;
   color: #003D59;
 }
@@ -370,17 +373,15 @@
   .page-number.active {
     background: linear-gradient(135deg, #003D59, #1cc88a);
     color: white;
+    box-shadow: inset 0 2px 6px rgba(0,0,0,0.25);
+    font-weight: 600;
   }
 
 .page-ellipsis {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  color: #003D59;
-  opacity: 0.7;
+  opacity: 0.6;
+  cursor: default;
 }
+
 
 /* Responsive */
 @media (max-width: 768px) {
