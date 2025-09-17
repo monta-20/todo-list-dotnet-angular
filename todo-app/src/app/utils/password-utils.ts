@@ -1,26 +1,37 @@
-export function calculateStrength(password: string): number {
-  let strength = 0;
+const MIN_LENGTH = 8;
+const LENGTH_WEIGHT = 40;
+const UPPER_WEIGHT = 15;
+const LOWER_WEIGHT = 15;
+const DIGIT_WEIGHT = 15;
+const SPECIAL_WEIGHT = 15;
 
+const UPPERCASE_REGEX = /[A-Z]/;
+const LOWERCASE_REGEX = /[a-z]/;
+const DIGIT_REGEX = /\d/;
+const SPECIAL_CHAR_REGEX = /[^A-Za-z0-9]/;
+
+export function calculateStrength(password: string): number {
   if (!password) return 0;
 
-  // LONGUEUR : priorité
-  if (password.length >= 8) {
-    strength += 40; 
-  } else {
-    return (password.length / 8) * 40; 
+  if (password.length < MIN_LENGTH) {
+    return (password.length / MIN_LENGTH) * LENGTH_WEIGHT;
   }
 
-  // AUTRES CRITÈRES
-  if (/[A-Z]/.test(password)) strength += 15;
-  if (/[a-z]/.test(password)) strength += 15;
-  if (/\d/.test(password)) strength += 15;
-  if (/[^A-Za-z0-9]/.test(password)) strength += 15;
+  let strength = LENGTH_WEIGHT;
+
+  if (UPPERCASE_REGEX.test(password)) strength += UPPER_WEIGHT;
+  if (LOWERCASE_REGEX.test(password)) strength += LOWER_WEIGHT;
+  if (DIGIT_REGEX.test(password)) strength += DIGIT_WEIGHT;
+  if (SPECIAL_CHAR_REGEX.test(password)) strength += SPECIAL_WEIGHT;
 
   return Math.min(strength, 100);
 }
 
+const WEAK_THRESHOLD = 60;
+const MEDIUM_THRESHOLD = 86;
+
 export function getStrengthColor(strength: number): string {
-  if (strength < 60) return 'bg-danger';   
-  if (strength < 86) return 'bg-warning'; 
-  return 'bg-success';                     
+  if (strength < WEAK_THRESHOLD) return 'bg-danger';
+  if (strength < MEDIUM_THRESHOLD) return 'bg-warning';
+  return 'bg-success';
 }
